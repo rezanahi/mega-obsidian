@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt"
-import { prisma } from '../../../../lib/prisma'
+import prisma from '../../../../lib/prisma'
 
 
 
@@ -10,7 +10,7 @@ export async function POST (req: Request) {
         if (!userName || !password) {
             return NextResponse.json({ error: "طلاعات ناقص است" }, { status: 400 })
         }
-        const exist = await prisma.user.findUnique({ where: userName })
+        const exist = await prisma.user.findUnique({ where: {userName} })
         if (exist) {
             return NextResponse.json({ error: "این ایمیل قبلا ثبت شده است" }, { status: 400 })
         }
