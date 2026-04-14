@@ -19,6 +19,7 @@ export async function GET() {
 }
 
 
+// Create Note
 export async function POST() {
     const user = await getUserFromToken();
 

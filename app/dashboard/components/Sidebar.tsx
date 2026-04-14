@@ -22,6 +22,15 @@ export default function Sidebar() {
         }
     };
 
+    const createNote = async () => {
+        try {
+            const newNote = await axios.post("/api/notes");
+            message.success("یادداشت با موفقیت ساخته شد")
+        } catch (err) {
+            message.error("خطا در ساخت یادداشت")
+        }
+    }
+
     useEffect(() => {
         fetch("/api/notes", { credentials: "include" })
             .then((res) => res.json())
@@ -33,7 +42,7 @@ export default function Sidebar() {
             {/* Header */}
             <div className="p-3 border-b border-gray-700 flex justify-between">
                 <span className="font-semibold">Notes</span>
-                <button className="text-green-400 hover:text-green-300">
+                <button onClick={createNote} className="text-green-400 hover:text-green-300">
                     <PlusOutlined />
                 </button>
             </div>
