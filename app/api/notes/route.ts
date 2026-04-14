@@ -2,6 +2,7 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { getUserFromToken } from "@/utils/auth";
 
+// Note List
 export async function GET() {
     const user = await getUserFromToken();
 

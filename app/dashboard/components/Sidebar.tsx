@@ -7,10 +7,24 @@ import { LogoutOutlined } from '@ant-design/icons';
 import {message} from "antd";
 import {useRouter} from "next/navigation";
 import axios from "axios";
+import {Note} from "@/types";
 
 export default function Sidebar() {
-    const [notes, setNotes] = useState([]);
+    const [notes, setNotes] = useState<Note[]>([]);
     const router = useRouter();
+
+    async function fetchNotes () {
+        try {
+            const res = await axios.get("/api/notes");
+            setNotes(res.data.notes);
+        } catch (err) {
+            message.error("خطا در دریافت یادداشت‌ها");
+        }
+    }
+
+    useEffect(() => {
+        fetchNotes()
+    }, [])
 
     const logout = async () => {
         try {
@@ -26,6 +40,7 @@ export default function Sidebar() {
         try {
             const newNote = await axios.post("/api/notes");
             message.success("یادداشت با موفقیت ساخته شد")
+            await fetchNotes()
         } catch (err) {
             message.error("خطا در ساخت یادداشت")
         }
