@@ -4,16 +4,18 @@ import { Form, Input, Button, message, Card } from "antd";
 import axios from "axios";
 import Link from "next/link";
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const onFinish = async (values: any) => {
         setLoading(true);
         try {
             const res = await axios.post("/api/auth/login", values);
             message.success("ورود موفقیت‌آمیز");
-            // بعداً هدایت می‌کنیم به dashboard
+            router.push('/dashboard');
         } catch (err: any) {
             message.error(err.response?.data?.error || "خطا در ورود");
         }

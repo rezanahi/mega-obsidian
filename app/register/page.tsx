@@ -4,14 +4,18 @@ import { Form, Input, Button, message, Card } from "antd";
 import axios from "axios";
 import Link from "next/link";
 import {useState} from "react";
+import {redirect} from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState<boolean>()
+    const router = useRouter();
     const onFinish = async (values: any) => {
         setLoading(true)
         try {
             const res = await axios.post("/api/auth/register", values)
             message.success("ثبت نام با موفقیت انجام شد")
+            router.push('/login');
         } catch (err: any) {
             message.error(err.response?.data?.error || "خطا در ثبت نام")
         }

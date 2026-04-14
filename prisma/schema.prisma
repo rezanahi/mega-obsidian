@@ -1,1 +1,49 @@
 
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  userName  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  notes     Note[]
+}
+
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String?
+  content   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  outgoingLinks NoteLink[] @relation("OutgoingLinks")
+
+  incomingLinks NoteLink[] @relation("IncomingLinks")
+}
+
+model NoteLink {
+  id Int @id @default(autoincrement())
+
+  sourceId Int
+  source   Note @relation("OutgoingLinks", fields: [sourceId], references: [id], onDelete: Cascade)
+
+  targetId Int
+  target   Note @relation("IncomingLinks", fields: [targetId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
