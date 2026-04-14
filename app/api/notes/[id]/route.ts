@@ -1,14 +1,17 @@
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest} from "next/server";
 import { getUserFromToken } from "@/utils/auth";
 
 
 export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
+
     const user = await getUserFromToken();
-    const noteId = Number(params.id);
+    const { id } = await params;
+    const noteId = Number(id);
+
 
     const note = await prisma.note.findFirst({
         where: { id: noteId, userId: user.id },
@@ -30,16 +33,17 @@ export async function GET(
 
 
 export async function PUT(
-    req: Request,
-    { params }: { params: { id: string } }
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const user = await getUserFromToken();
-    const noteId = Number(params.id);
+    const { id } = await params;
+    const noteId = Number(id);
     const { title, content } = await req.json();
 
     const note = await prisma.note.updateMany({
         where: { id: noteId, userId: user.id },
-        data: { title, content },
+        data: { title: title, content: content },
     });
 
     return NextResponse.json({ success: true });

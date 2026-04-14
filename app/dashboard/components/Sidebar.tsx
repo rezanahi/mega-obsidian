@@ -8,23 +8,13 @@ import {message} from "antd";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
+import {useGetAllNotes} from "@/apis";
+
 
 export default function Sidebar() {
-    const [notes, setNotes] = useState<Note[]>([]);
+    const {notes, isLoading} = useGetAllNotes()
     const router = useRouter();
 
-    async function fetchNotes () {
-        try {
-            const res = await axios.get("/api/notes");
-            setNotes(res.data.notes);
-        } catch (err) {
-            message.error("خطا در دریافت یادداشت‌ها");
-        }
-    }
-
-    useEffect(() => {
-        fetchNotes()
-    }, [])
 
     const logout = async () => {
         try {
@@ -40,17 +30,11 @@ export default function Sidebar() {
         try {
             const newNote = await axios.post("/api/notes");
             message.success("یادداشت با موفقیت ساخته شد")
-            await fetchNotes()
+            // await fetchNotes()
         } catch (err) {
             message.error("خطا در ساخت یادداشت")
         }
     }
-
-    useEffect(() => {
-        fetch("/api/notes", { credentials: "include" })
-            .then((res) => res.json())
-            .then((data) => setNotes(data.notes));
-    }, []);
 
     return (
         <div className="h-full flex flex-col">
@@ -64,7 +48,7 @@ export default function Sidebar() {
 
             {/* Notes list */}
             <div className="overflow-y-auto">
-                {notes.map((note) => (
+                {notes?.map((note : Note) => (
                     <Link
                         key={note.id}
                         href={`/dashboard/note/${note.id}`}
