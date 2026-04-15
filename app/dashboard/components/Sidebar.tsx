@@ -8,7 +8,7 @@ import {message} from "antd";
 import {useRouter, usePathname} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
-import {useAddNote, useGetAllNotes} from "@/apis";
+import {useAddNote, useDeleteNote, useGetAllNotes} from "@/apis";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 
@@ -18,6 +18,7 @@ export default function Sidebar() {
     const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; }>({visible: false, x: 0, y: 0, noteId: null,});
     const router = useRouter();
     const { mutateAsync: addNote } = useAddNote()
+    const { mutate: deleteNote } = useDeleteNote()
     const pathname = usePathname();
 
     // Close Context Menu
@@ -111,7 +112,9 @@ export default function Sidebar() {
                     </button>
                     <button
                         className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-red-400"
-                        onClick={() => console.log("Delete")}
+                        onClick={ async () => {
+                            if (contextMenu.noteId) await deleteNote(String(contextMenu.noteId))
+                        }}
                     >
                         <DeleteOutlined></DeleteOutlined>
                         حذف یادداشت

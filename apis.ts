@@ -41,8 +41,6 @@ export const useAddNote = () => {
     return useMutation({
         mutationFn: async () => {
             const res = await axios.post(`/api/notes`);
-            console.log("Here")
-            console.log("Res = ", res)
             return res.data.note
         },
         onSuccess: () => {
@@ -53,6 +51,26 @@ export const useAddNote = () => {
         },
         onError: () => {
             message.error("خطا در ساخت یادداشت")
+        }
+    });
+}
+
+// Delete Note Api
+export const useDeleteNote = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const res = await axios.delete(`/api/notes/${id}`);
+            return res.data.note
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["notes"]
+            });
+            message.success("یادداشت حذف شد")
+        },
+        onError: () => {
+            message.error("خطا در حذف یادداشت")
         }
     });
 }

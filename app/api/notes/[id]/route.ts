@@ -51,11 +51,12 @@ export async function PUT(
 
 
 export async function DELETE(
-    req: Request,
-    { params }: { params: { id: string } }
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const user = await getUserFromToken();
-    const noteId = Number(params.id);
+    const { id } = await params;
+    const noteId = Number(id);
 
     await prisma.note.deleteMany({
         where: { id: noteId, userId: user.id },
