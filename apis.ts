@@ -3,6 +3,7 @@ import axios from "axios";
 import {NextRequest, NextResponse} from "next/server";
 import {getUserFromToken} from "@/utils/auth";
 import prisma from "@/lib/prisma";
+import {message} from "antd";
 
 // Get All Notes
 export const useGetAllNotes = () => {
@@ -19,7 +20,7 @@ export const useGetAllNotes = () => {
     };
 }
 
-
+// Edit Note Api
 export const useEditNote = (id: string) => {
     const queryClient = useQueryClient()
     return useMutation({
@@ -34,3 +35,24 @@ export const useEditNote = (id: string) => {
     });
 }
 
+// Add Note Api
+export const useAddNote = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async () => {
+            const res = await axios.post(`/api/notes`);
+            console.log("Here")
+            console.log("Res = ", res)
+            return res.data.note
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["notes"]
+            });
+            message.success("یادداشت با موفقیت ساخته شد")
+        },
+        onError: () => {
+            message.error("خطا در ساخت یادداشت")
+        }
+    });
+}

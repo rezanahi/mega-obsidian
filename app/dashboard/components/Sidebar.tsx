@@ -8,12 +8,13 @@ import {message} from "antd";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
-import {useGetAllNotes} from "@/apis";
+import {useAddNote, useGetAllNotes} from "@/apis";
 
 
 export default function Sidebar() {
     const {notes, isLoading} = useGetAllNotes()
     const router = useRouter();
+    const { mutateAsync: addNote } = useAddNote()
 
 
     const logout = async () => {
@@ -26,13 +27,15 @@ export default function Sidebar() {
         }
     };
 
+
     const createNote = async () => {
         try {
-            const newNote = await axios.post("/api/notes");
-            message.success("یادداشت با موفقیت ساخته شد")
-            // await fetchNotes()
+            const newNote = await addNote()
+            // message.success("یادداشت با موفقیت ساخته شد")
+            console.log("newNote = ", newNote)
+            router.push(`/dashboard/note/${newNote.id}`)
         } catch (err) {
-            message.error("خطا در ساخت یادداشت")
+
         }
     }
 

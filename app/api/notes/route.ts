@@ -13,7 +13,7 @@ export async function GET() {
             title: true,
             updatedAt: true,
         },
-        orderBy: { updatedAt: "desc" },
+        orderBy: { createdAt: "desc" },
     });
 
     return NextResponse.json({ notes });
