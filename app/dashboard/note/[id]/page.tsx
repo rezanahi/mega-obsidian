@@ -9,7 +9,9 @@ import {useEditNote} from "@/apis";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
+import remarkWikiLink from 'remark-wiki-link';
 import {EditOutlined, MoreOutlined, ReadOutlined } from '@ant-design/icons';
+import Link from "next/link";
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
     { ssr: false }
@@ -108,7 +110,25 @@ export default function NotePage() {
                             className={'h-full'}
                         /> :
                         <div className="prose prose-invert markdown max-w-none">
-                            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                            <ReactMarkdown
+                                components={{
+                                    a: ({node, ...props}) => {
+                                        const href = String(props.href)?.split("/").slice(2).join('/');
+                                        return (
+                                            <Link href={href} prefetch={false}>
+                                                {props.children}
+                                            </Link>
+                                        );
+                                    },
+                                }}
+                                remarkPlugins={[
+                                remarkGfm,
+                                remarkBreaks,
+                                [
+                                    remarkWikiLink, {
+                                    pageResolver: (name: string) => [`/dashboard/note/${name.trim()}`]
+                                }]
+                            ]}>
                                 {String(noteContent ?? '').replace(/^\t+/gm, "").replace(/^ {1,4}/gm, "").trimStart()}
                             </ReactMarkdown>
                         </div>
