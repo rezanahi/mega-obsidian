@@ -24,3 +24,30 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.obsidian-editor .cm-editor {
+  font-family: ui-serif, Georgia, serif;
+  font-size: 16px;
+}
+
+.obsidian-editor .cm-content {
+  padding: 20px 20px 20px 0px ;
+  line-height: 1.7;
+}
+
+.obsidian-editor .cm-gutters {
+  display: none;
+}
+
+.obsidian-editor .cm-editor {
+  background: transparent;
+}
+
+.obsidian-editor .cm-focused {
+  outline: none;
+}
+
+.obsidian-editor .cm-cursor {
+  border-left-color: white !important; /* رنگ نشانگر */
+}
+
