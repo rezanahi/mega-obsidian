@@ -32,6 +32,12 @@ export const useEditNote = (id: string) => {
                 queryKey: ["notes"]
             }); // ریفرش کردن GET;
         },
+        onError: (error: any) => {
+            const msg = error?.response?.data?.message
+            if (msg) {
+                message.error(msg)
+            }
+        }
     });
 }
 

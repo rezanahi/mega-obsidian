@@ -41,6 +41,17 @@ export async function PUT(
     const noteId = Number(id);
     const { title, content } = await req.json();
 
+    const existingByTitle = await prisma.note.findFirst({
+        where: {
+            title: title,
+            NOT: {
+                id: noteId
+            }}
+    })
+    if (existingByTitle) {
+        return NextResponse.json({ message: 'یادداشتی با این عنوان وجود دارد' }, { status: 309 })
+    }
+
     const note = await prisma.note.updateMany({
         where: { id: noteId, userId: user.id },
         data: { title: title, content: content },

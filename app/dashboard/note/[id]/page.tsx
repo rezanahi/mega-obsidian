@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { useParams } from "next/navigation";
 import { Note } from "@/types"
 import axios from "axios";
@@ -18,6 +18,7 @@ const MarkdownEditor = dynamic(
 );
 export default function NotePage() {
     const { id } = useParams();
+    const isFirstRender = useRef(true)
     const [note, setNote] = useState<Partial<Note> | null>(null);
     const [noteTitle, setNoteTitle] = useState<Note['title']>('')
     const [noteContent, setNoteContent] = useState<Note['content']>('')
@@ -26,18 +27,19 @@ export default function NotePage() {
     const [saving, setSaving] = useState(false);
     const { mutate : updateNote } = useEditNote(String(id))
 
-    useEffect(() => {
-        console.log("noteContent = ", noteContent)
-    }, [noteContent])
 
     useEffect(() => {
-        const timeout = setTimeout(() => {
-            setSaving(true);
-            updateNote({title: noteTitle || '', content: noteContent})
-            setSaving(false)
-        }, 800);
-
-        return () => clearTimeout(timeout);
+        if (isFirstRender.current) {
+            isFirstRender.current = false
+            return
+        } else {
+            const timeout = setTimeout(() => {
+                setSaving(true);
+                updateNote({title: noteTitle || '', content: noteContent})
+                setSaving(false)
+            }, 800);
+            return () => clearTimeout(timeout);
+        }
     }, [noteTitle, noteContent]);
 
 
@@ -127,6 +129,7 @@ export default function NotePage() {
                                 [
                                     remarkWikiLink, {
                                     pageResolver: (name: string) => {
+
                                         return [`/dashboard/note/${name.trim()}`]
                                     }
                                 }]
