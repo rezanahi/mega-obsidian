@@ -6,6 +6,10 @@ import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
 import {useEditNote} from "@/apis";
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import remarkBreaks from "remark-breaks"
+import {EditOutlined, MoreOutlined, ReadOutlined } from '@ant-design/icons';
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
     { ssr: false }
@@ -15,9 +19,14 @@ export default function NotePage() {
     const [note, setNote] = useState<Partial<Note> | null>(null);
     const [noteTitle, setNoteTitle] = useState<Note['title']>('')
     const [noteContent, setNoteContent] = useState<Note['content']>('')
+    const [mode, setMode] = useState<"edit" | "preview">("edit");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const { mutate : updateNote } = useEditNote(String(id))
+
+    useEffect(() => {
+        console.log("noteContent = ", noteContent)
+    }, [noteContent])
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -56,8 +65,31 @@ export default function NotePage() {
     }
 
     return (
-        <div className="flex flex-col justify-start gap-3 h-full">
-
+        <div className="flex flex-col justify-start gap-3 h-full overflow-y-auto">
+            <div className={`h-12 shrink-0 flex gap-1 justify-start items-center px-3 border-b border-gray-700`}>
+                {
+                    mode === 'edit' ?
+                        <button
+                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            onClick={() => setMode("preview")}
+                        >
+                            <ReadOutlined></ReadOutlined>
+                        </button>
+                        : mode === 'preview' &&
+                        <button
+                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            onClick={() => setMode("edit")}
+                        >
+                            <EditOutlined></EditOutlined>
+                        </button>
+                }
+                <button
+                    className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                    onClick={() => console.log("more action")}
+                >
+                    <MoreOutlined></MoreOutlined>
+                </button>
+            </div>
             <input
                 value={noteTitle || ""}
                 onChange={(e) =>
@@ -68,11 +100,19 @@ export default function NotePage() {
             />
 
             <div className="flex-1 px-6 pb-6 grow">
-                <MarkdownEditor
-                    value={noteContent}
-                    onChange={(value) => setNoteContent(value)}
-                    className={'h-full'}
-                />
+                {
+                    mode === 'edit' ?
+                        <MarkdownEditor
+                            value={noteContent}
+                            onChange={(value) => setNoteContent(value)}
+                            className={'h-full'}
+                        /> :
+                        <div className="prose prose-invert markdown max-w-none">
+                            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>
+                                {String(noteContent ?? '').replace(/^\t+/gm, "").replace(/^ {1,4}/gm, "").trimStart()}
+                            </ReactMarkdown>
+                        </div>
+                }
             </div>
 
         </div>

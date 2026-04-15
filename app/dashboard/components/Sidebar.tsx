@@ -10,6 +10,8 @@ import axios from "axios";
 import {Note} from "@/types";
 import {useAddNote, useDeleteNote, useGetAllNotes} from "@/apis";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 
 
@@ -54,7 +56,7 @@ export default function Sidebar() {
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="p-3 border-b border-gray-700 flex justify-between">
+            <div className="p-3 h-12 border-b border-gray-700 flex justify-between">
                 <span className="font-semibold">Notes</span>
                 <button onClick={createNote} className="text-green-400 hover:text-green-300">
                     <PlusOutlined />
@@ -114,6 +116,7 @@ export default function Sidebar() {
                         className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-red-400"
                         onClick={ async () => {
                             if (contextMenu.noteId) await deleteNote(String(contextMenu.noteId))
+                            if (pathname === `/dashboard/note/${contextMenu.noteId}`) router.push('/dashboard/')
                         }}
                     >
                         <DeleteOutlined></DeleteOutlined>
