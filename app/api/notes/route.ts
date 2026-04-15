@@ -31,7 +31,11 @@ export async function POST() {
             userId: user.id,
         },
     });
+    const updatedNote = await prisma.note.update({
+        where: {id: note.id},
+        data: {title: `Untitled ${note.id}`}
+    })
 
-    return NextResponse.json({ note });
+    return NextResponse.json({ updatedNote });
 }
 

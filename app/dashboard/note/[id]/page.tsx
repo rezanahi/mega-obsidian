@@ -126,7 +126,9 @@ export default function NotePage() {
                                 remarkBreaks,
                                 [
                                     remarkWikiLink, {
-                                    pageResolver: (name: string) => [`/dashboard/note/${name.trim()}`]
+                                    pageResolver: (name: string) => {
+                                        return [`/dashboard/note/${name.trim()}`]
+                                    }
                                 }]
                             ]}>
                                 {String(noteContent ?? '').replace(/^\t+/gm, "").replace(/^ {1,4}/gm, "").trimStart()}
