@@ -5,16 +5,27 @@ import Link from "next/link";
 import { PlusOutlined } from "@ant-design/icons";
 import { LogoutOutlined } from '@ant-design/icons';
 import {message} from "antd";
-import {useRouter} from "next/navigation";
+import {useRouter, usePathname} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
 import {useAddNote, useGetAllNotes} from "@/apis";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+
 
 
 export default function Sidebar() {
     const {notes, isLoading} = useGetAllNotes()
+    const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; }>({visible: false, x: 0, y: 0, noteId: null,});
     const router = useRouter();
     const { mutateAsync: addNote } = useAddNote()
+    const pathname = usePathname();
+
+    // Close Context Menu
+    useEffect(() => {
+        const close = () => setContextMenu((prev) => ({ ...prev, visible: false }));
+        window.addEventListener("click", close);
+        return () => window.removeEventListener("click", close);
+    }, []);
 
 
     const logout = async () => {
@@ -51,15 +62,27 @@ export default function Sidebar() {
 
             {/* Notes list */}
             <div className="overflow-y-auto">
-                {notes?.map((note : Note) => (
-                    <Link
-                        key={note.id}
-                        href={`/dashboard/note/${note.id}`}
-                        className="block px-3 py-2 hover:bg-gray-700 transition"
-                    >
-                        {note.title || "Untitled"}
-                    </Link>
-                ))}
+                {notes?.map((note : Note) => {
+                    const isActive = pathname === `/dashboard/note/${note.id}`;
+                    return (
+                        <Link
+                            onContextMenu={(e) => {
+                                e.preventDefault();
+                                setContextMenu({
+                                    visible: true,
+                                    x: e.clientX,
+                                    y: e.clientY,
+                                    noteId: note.id,
+                                });
+                            }}
+                            key={note.id}
+                            href={`/dashboard/note/${note.id}`}
+                            className={`block px-3 py-2 ${isActive ? "bg-gray-600 text-white" : "hover:bg-gray-700"} transition`}
+                        >
+                            {note.title || "Untitled"}
+                        </Link>
+                    )
+                })}
             </div>
 
             {/* Footer */}
@@ -71,6 +94,33 @@ export default function Sidebar() {
                         onClick={logout} />
                 </button>
             </div>
+            {contextMenu.visible && (
+                <div
+                    className="fixed w-48 bg-[#2b2b2b] border border-gray-700 rounded-md shadow-lg z-50"
+                    style={{
+                        top: contextMenu.y,
+                        left: contextMenu.x,
+                    }}
+                >
+                    <button
+                        className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                        onClick={() => console.log("Rename")}
+                    >
+                        <EditOutlined></EditOutlined>
+                        تغییر عنوان
+                    </button>
+                    <button
+                        className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-red-400"
+                        onClick={() => console.log("Delete")}
+                    >
+                        <DeleteOutlined></DeleteOutlined>
+                        حذف یادداشت
+                    </button>
+                </div>
+            )}
+
         </div>
+
+
     );
 }
