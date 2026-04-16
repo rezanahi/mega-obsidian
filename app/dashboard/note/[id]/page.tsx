@@ -37,7 +37,7 @@ export default function NotePage() {
                 setSaving(true);
                 updateNote({title: noteTitle || '', content: noteContent})
                 setSaving(false)
-            }, 800);
+            }, 1500);
             return () => clearTimeout(timeout);
         }
     }, [noteTitle, noteContent]);
