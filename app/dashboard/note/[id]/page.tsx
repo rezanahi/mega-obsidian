@@ -5,7 +5,7 @@ import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
-import {useEditNote} from "@/apis";
+import {useEditNote, useGetAllNotes, useGetNoteByTitle} from "@/apis";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
@@ -129,8 +129,7 @@ export default function NotePage() {
                                 [
                                     remarkWikiLink, {
                                     pageResolver: (name: string) => {
-
-                                        return [`/dashboard/note/${name.trim()}`]
+                                        return [`/dashboard/note/resolve/${name.trim()}`]
                                     }
                                 }]
                             ]}>

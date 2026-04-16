@@ -20,6 +20,24 @@ export const useGetAllNotes = () => {
     };
 }
 
+// Get One Note By Title
+export const useGetNoteByTitle = (title: string | null) => {
+    const { data, isLoading } = useQuery<any, any>({
+        queryKey: ["note", title],
+        queryFn: async ({ queryKey }) => {
+            if (title) {
+                const res = await axios.get(`/api/notes?title=${title}`)
+                return res
+            }
+        },
+    });
+    return {
+        data ,
+        isLoading ,
+    };
+}
+
+
 // Edit Note Api
 export const useEditNote = (id: string) => {
     const queryClient = useQueryClient()
