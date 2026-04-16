@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     if (title) {
         const note = await prisma.note.findUnique({
-            where: {title: title} ,
+            where: {title: title, userId: user.id} ,
             select: {
                 id: true,
                 title: true,
@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
             },
         });
         const updatedNote = await prisma.note.update({
-            where: {id: note.id},
+            where: {id: note.id, userId: user.id},
             data: {title: `Untitled ${note.id}`}
         })
         return NextResponse.json({ updatedNote });
