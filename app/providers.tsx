@@ -5,7 +5,16 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useState } from 'react';
 
 export function Providers({ children }: { children: React.ReactNode }) {
-    const [client] = useState(() => new QueryClient());
+    const [client] = useState(() => new QueryClient({
+        defaultOptions: {
+            queries: {
+                retry: false,
+            },
+            mutations: {
+                retry: false,
+            },
+        },
+    }));
 
     return (
         <QueryClientProvider client={client}>

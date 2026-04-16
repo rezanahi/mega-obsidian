@@ -22,7 +22,7 @@ export const useGetAllNotes = () => {
 
 // Get One Note By Title
 export const useGetNoteByTitle = (title: string | null) => {
-    const { data, isLoading } = useQuery<any, any>({
+    const { data, isLoading, isSuccess, isError } = useQuery<any, any>({
         queryKey: ["note", title],
         queryFn: async ({ queryKey }) => {
             if (title) {
@@ -34,6 +34,8 @@ export const useGetNoteByTitle = (title: string | null) => {
     return {
         data ,
         isLoading ,
+        isSuccess ,
+        isError
     };
 }
 
@@ -63,8 +65,8 @@ export const useEditNote = (id: string) => {
 export const useAddNote = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async () => {
-            const res = await axios.post(`/api/notes`);
+        mutationFn: async (body: { title?: string }) => {
+            const res = await axios.post(`/api/notes`, {title: body.title});
             return res.data.note
         },
         onSuccess: () => {

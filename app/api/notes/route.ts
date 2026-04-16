@@ -40,21 +40,32 @@ export async function GET(req: NextRequest) {
 
 
 // Create Note
-export async function POST() {
+export async function POST(req: NextRequest) {
     const user = await getUserFromToken();
-
-    const note = await prisma.note.create({
-        data: {
-            title: "Untitled",
-            content: "",
-            userId: user.id,
-        },
-    });
-    const updatedNote = await prisma.note.update({
-        where: {id: note.id},
-        data: {title: `Untitled ${note.id}`}
-    })
-
-    return NextResponse.json({ updatedNote });
+    const body = await req.json();
+    const { title } = body;
+    if ( title ) {
+        const note = await prisma.note.create({
+            data: {
+                title: title,
+                content: "",
+                userId: user.id,
+            },
+        })
+        return NextResponse.json({ note });
+    } else {
+        const note = await prisma.note.create({
+            data: {
+                title: "Untitled",
+                content: "",
+                userId: user.id,
+            },
+        });
+        const updatedNote = await prisma.note.update({
+            where: {id: note.id},
+            data: {title: `Untitled ${note.id}`}
+        })
+        return NextResponse.json({ updatedNote });
+    }
 }
 

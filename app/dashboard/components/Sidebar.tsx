@@ -44,7 +44,7 @@ export default function Sidebar() {
 
     const createNote = async () => {
         try {
-            const newNote = await addNote()
+            const newNote = await addNote({title: undefined})
             // message.success("یادداشت با موفقیت ساخته شد")
             console.log("newNote = ", newNote)
             router.push(`/dashboard/note/${newNote.id}`)
