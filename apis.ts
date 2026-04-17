@@ -100,3 +100,18 @@ export const useDeleteNote = () => {
         }
     });
 }
+
+// Get Graph Data
+export const useGetAllGraph = () => {
+    const { data, isLoading } = useQuery<any, any>({
+        queryKey: ["graph"],
+        queryFn: async () => {
+            const res = await axios.get("/api/graph");
+            return res.data
+        },
+    });
+    return {
+        data: data ,
+        isLoading
+    };
+}
