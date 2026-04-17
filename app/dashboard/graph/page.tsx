@@ -5,6 +5,12 @@ import { Network } from "vis-network";
 import {useGetAllGraph} from "@/apis";
 import {useRouter} from "next/navigation";
 
+function NoteLinkCount (nodeId: any, links: any) {
+    const sourceIdCount = links.filter(link => link.sourceId === nodeId).length
+    const targetIdCount = links.filter(link => link.targetId === nodeId).length
+    return sourceIdCount + targetIdCount
+}
+
 export default function GraphPage() {
     const container = useRef<HTMLDivElement>(null);
     const networkRef = useRef<any>(null);
@@ -14,7 +20,7 @@ export default function GraphPage() {
     useEffect(() => {
         if (!graphDataIsSuccess || !container.current) return;
 
-        const nodes = graphData.nodes.map(n => ({ id: n.id, label: n.title }));
+        const nodes = graphData.nodes.map(n => ({ id: n.id, label: n.title, size: 8 + NoteLinkCount(n.id, graphData.links) }));
         const edges = graphData.links.map(l => ({ from: l.sourceId, to: l.targetId }));
 
         // اگر اولین بار است → شبکه را بساز
