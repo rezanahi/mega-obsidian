@@ -9,7 +9,7 @@ import {useRouter, usePathname} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
 import {useAddNote, useDeleteNote, useGetAllNotes} from "@/apis";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, NodeIndexOutlined } from "@ant-design/icons";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
@@ -56,8 +56,11 @@ export default function Sidebar() {
     return (
         <div className="h-full flex flex-col">
             {/* Header */}
-            <div className="p-3 h-12 border-b border-gray-700 flex justify-between">
-                <span className="font-semibold">Notes</span>
+            <div className="p-3 h-12 border-b border-gray-700 flex justify-start gap-3">
+                <span className="font-semibold mr-auto">Notes</span>
+                <button onClick={() => {router.push('/dashboard/graph')}} className="text-green-400 hover:text-green-300">
+                    <NodeIndexOutlined />
+                </button>
                 <button onClick={createNote} className="text-green-400 hover:text-green-300">
                     <PlusOutlined />
                 </button>

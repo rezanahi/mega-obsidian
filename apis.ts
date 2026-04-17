@@ -103,7 +103,7 @@ export const useDeleteNote = () => {
 
 // Get Graph Data
 export const useGetAllGraph = () => {
-    const { data, isLoading } = useQuery<any, any>({
+    const { data, isLoading, isSuccess } = useQuery<any, any>({
         queryKey: ["graph"],
         queryFn: async () => {
             const res = await axios.get("/api/graph");
@@ -112,6 +112,7 @@ export const useGetAllGraph = () => {
     });
     return {
         data: data ,
-        isLoading
+        isLoading,
+        isSuccess
     };
 }

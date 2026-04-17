@@ -1,21 +1,78 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import { useEffect, useRef } from "react";
+import { Network } from "vis-network";
 import {useGetAllGraph} from "@/apis";
+import {useRouter} from "next/navigation";
 
 export default function GraphPage() {
-    // const [graphData, setGraphData] = useState<any>(null);
-    const {data: graphData, isLoading: graphIsLoading} = useGetAllGraph()
+    const container = useRef<HTMLDivElement>(null);
+    const networkRef = useRef<any>(null);
+    const {data: graphData, isSuccess: graphDataIsSuccess} = useGetAllGraph()
+    const router = useRouter()
 
+    useEffect(() => {
+        if (!graphDataIsSuccess || !container.current) return;
 
-    if (graphIsLoading) return <div className="p-4">درحال لود گراف...</div>;
-    if (!graphData) return <div className="p-4">گرافی یافت نشد.</div>;
+        const nodes = graphData.nodes.map(n => ({ id: n.id, label: n.title }));
+        const edges = graphData.links.map(l => ({ from: l.sourceId, to: l.targetId }));
+
+        // اگر اولین بار است → شبکه را بساز
+        if (!networkRef.current) {
+            const data = { nodes, edges };
+
+            const options = {
+                interaction: { hover: true },
+                nodes: {
+                    shape: "dot",
+                    size: 16,
+                    color: { background: "#4e73df", border: "#1b3baf" },
+                    font: { color: "#fff" },
+                },
+                edges: {
+                    color: "#999",
+                    arrows: { to: { enabled: true, scaleFactor: 0.6 } },
+                },
+                physics: {
+                    enabled: true,
+                    stabilization: { iterations: 200 },
+                },
+            };
+
+            networkRef.current = new Network(container.current, data, options);
+
+            networkRef.current.on("hoverNode", () => {
+                container.current!.style.cursor = "pointer";
+            });
+
+            networkRef.current.on("blurNode", () => {
+                container.current!.style.cursor = "default";
+            });
+
+            networkRef.current.on("click", params => {
+                if (params.nodes.length > 0) {
+                    router.push(`/dashboard/note/${params.nodes[0]}`);
+                }
+            });
+        } else {
+            // آپدیت نود و لینک‌ها بدون ساختن دوباره شبکه
+            const network = networkRef.current;
+
+            network.body.data.nodes.clear();
+            network.body.data.nodes.update(nodes);
+
+            network.body.data.edges.clear();
+            network.body.data.edges.update(edges);
+        }
+    }, [graphDataIsSuccess, graphData]);
 
     return (
-        <div className="w-full h-full flex items-center justify-center">
-            {/* اینجا بعداً ForceGraph2D اضافه می‌شود */}
-            <div className="text-gray-300">
-                گراف لود شد — حالا وقت اضافه کردن ForceGraph2D است
-            </div>
-        </div>
+        <div
+            ref={container}
+            style={{
+                width: "100%",
+                height: "100%",
+            }}
+        />
     );
 }
