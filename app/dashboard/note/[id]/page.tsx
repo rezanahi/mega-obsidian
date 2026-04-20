@@ -29,9 +29,26 @@ export default function NotePage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [recording, setRecording] = useState<boolean>(false)
-    const [audioBlob, setAudioBlob] = useState<>(null)
+    const [audioBlob, setAudioBlob] = useState(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
+
+    async function sendAudioToAPI(blob: Blob) {
+        const file = new File([blob], "voice.webm", { type: "audio/webm" })
+
+        const formData = new FormData()
+        formData.append("audio", file)
+
+        const res = await fetch("/api/audio-to-text", {
+            method: "POST",
+            body: formData,
+        })
+
+        const data = await res.json()
+        console.log("AI text:", data.text)
+
+        return data.text
+    }
 
     async function startRecording() {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
@@ -58,10 +75,12 @@ export default function NotePage() {
         setRecording(true)
     }
 
-    function stopRecording() {
+    async function stopRecording() {
         mediaRecorderRef.current?.stop()
         setRecording(false)
-        // console.log('audio = ', )
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" })
+        const text = await sendAudioToAPI(blob)
+        console.log("final text = ", text)
     }
 
     useEffect(() => {
