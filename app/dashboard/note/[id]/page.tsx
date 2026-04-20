@@ -10,7 +10,8 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import remarkWikiLink from 'remark-wiki-link';
-import {EditOutlined, MoreOutlined, ReadOutlined } from '@ant-design/icons';
+import {EditOutlined, MoreOutlined, ReadOutlined, AudioOutlined  } from '@ant-design/icons';
+import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
@@ -19,14 +20,49 @@ const MarkdownEditor = dynamic(
 export default function NotePage() {
     const { id } = useParams();
     const isFirstRender = useRef(true)
+    const mediaRecorderRef = useRef<MediaRecorder | null>(null)
+    const chunksRef = useRef<Blob[]>([])
     const [note, setNote] = useState<Partial<Note> | null>(null);
     const [noteTitle, setNoteTitle] = useState<Note['title']>('')
     const [noteContent, setNoteContent] = useState<Note['content']>('')
     const [mode, setMode] = useState<"edit" | "preview">("edit");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [recording, setRecording] = useState<boolean>(false)
+    const [audioBlob, setAudioBlob] = useState<>(null)
+    const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
 
+    async function startRecording() {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+
+        const mediaRecorder = new MediaRecorder(stream)
+
+        mediaRecorderRef.current = mediaRecorder
+        chunksRef.current = []
+
+        mediaRecorder.ondataavailable = (event) => {
+            chunksRef.current.push(event.data)
+        }
+
+        mediaRecorder.onstop = () => {
+            const blob = new Blob(chunksRef.current, { type: "audio/webm" })
+            const url = URL.createObjectURL(blob)
+
+            setAudioUrl(url)
+
+            console.log("Audio Blob:", blob)
+        }
+
+        mediaRecorder.start()
+        setRecording(true)
+    }
+
+    function stopRecording() {
+        mediaRecorderRef.current?.stop()
+        setRecording(false)
+        // console.log('audio = ', )
+    }
 
     useEffect(() => {
         if (isFirstRender.current) {
@@ -72,16 +108,35 @@ export default function NotePage() {
         <div className="flex flex-col justify-start gap-3 h-full overflow-y-auto">
             <div className={`h-12 shrink-0 flex gap-1 justify-start items-center px-3 border-b border-gray-700`}>
                 {
-                    mode === 'edit' ?
+                    recording ?
                         <button
                             className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            onClick={() => {
+                                stopRecording()
+                            }}
+                        >
+                            <RecordCircleIcon width={16} height={16} fill={"red"}></RecordCircleIcon>
+                        </button>
+                        : <button
+                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            onClick={() => {
+                                startRecording()
+                            }}
+                        >
+                            <AudioOutlined></AudioOutlined>
+                        </button>
+                }
+                {
+                    mode === 'edit' ?
+                        <button
+                            className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
                             onClick={() => setMode("preview")}
                         >
                             <ReadOutlined></ReadOutlined>
                         </button>
                         : mode === 'preview' &&
                         <button
-                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
                             onClick={() => setMode("edit")}
                         >
                             <EditOutlined></EditOutlined>
