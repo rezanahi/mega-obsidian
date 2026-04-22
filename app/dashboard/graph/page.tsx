@@ -6,8 +6,8 @@ import {useGetAllGraph} from "@/apis";
 import {useRouter} from "next/navigation";
 
 function NoteLinkCount (nodeId: any, links: any) {
-    const sourceIdCount = links.filter(link => link.sourceId === nodeId).length
-    const targetIdCount = links.filter(link => link.targetId === nodeId).length
+    const sourceIdCount = links.filter((link: any) => link.sourceId === nodeId).length
+    const targetIdCount = links.filter((link: any) => link.targetId === nodeId).length
     return sourceIdCount + targetIdCount
 }
 
@@ -20,8 +20,8 @@ export default function GraphPage() {
     useEffect(() => {
         if (!graphDataIsSuccess || !container.current) return;
 
-        const nodes = graphData.nodes.map(n => ({ id: n.id, label: n.title, size: 8 + NoteLinkCount(n.id, graphData.links) }));
-        const edges = graphData.links.map(l => ({ from: l.sourceId, to: l.targetId }));
+        const nodes = graphData.nodes.map((n:any) => ({ id: n.id, label: n.title, size: 8 + NoteLinkCount(n.id, graphData.links) }));
+        const edges = graphData.links.map((l:any) => ({ from: l.sourceId, to: l.targetId }));
 
         // اگر اولین بار است → شبکه را بساز
         if (!networkRef.current) {
@@ -55,7 +55,7 @@ export default function GraphPage() {
                 container.current!.style.cursor = "default";
             });
 
-            networkRef.current.on("click", params => {
+            networkRef.current.on("click", (params: any) => {
                 if (params.nodes.length > 0) {
                     router.push(`/dashboard/note/${params.nodes[0]}`);
                 }
