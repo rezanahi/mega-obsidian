@@ -5,7 +5,7 @@ import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
-import {useEditNote, useGetAllNotes, useGetNoteByTitle} from "@/apis";
+import {useEditNote, useGetAllNotes, useGetNoteByTitle, useVoiceToText} from "@/apis";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
@@ -32,22 +32,31 @@ export default function NotePage() {
     const [audioBlob, setAudioBlob] = useState(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
+    const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess} = useVoiceToText()
 
+    useEffect(() => {
+        if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
+        setNoteContent(prev => {
+            const newContent = (prev || "") + "\n" + voiceToTextData?.data?.text
+            return newContent
+        })
+    }, [voiceToTextData])
     async function sendAudioToAPI(blob: Blob) {
         const file = new File([blob], "voice.webm", { type: "audio/webm" })
 
         const formData = new FormData()
         formData.append("audio", file)
 
-        const res = await fetch("/api/audio-to-text", {
-            method: "POST",
-            body: formData,
-        })
+        // const res = await fetch("/api/audio-to-text", {
+        //     method: "POST",
+        //     body: formData,
+        // })
+        const res = await voiceToText(formData)
 
-        const data = await res.json()
-        console.log("AI text:", data.text)
+        // const data = voiceToTextData
+        // console.log("AI text:", data.text)
 
-        return data.text
+        // return data.text
     }
 
     async function startRecording() {
@@ -67,8 +76,14 @@ export default function NotePage() {
             const blob = new Blob(chunksRef.current, { type: "audio/webm" })
             console.log("Recorded Blob:", blob, "size:", blob.size)
             // اگر size=0 → یعنی میکروفن mute، یا start/stop خیلی سریع
-            const text = await sendAudioToAPI(blob)
-            console.log("final text = ", text)
+            // const text = await sendAudioToAPI(blob)
+            sendAudioToAPI(blob)
+            // if (text) {
+            //     setNoteContent(prev => {
+            //         const newContent = (prev || "") + "\n" + text
+            //         return newContent
+            //     })
+            // }
         }
 
         mediaRecorder.start()
