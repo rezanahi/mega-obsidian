@@ -62,13 +62,13 @@ export default function NotePage() {
             chunksRef.current.push(event.data)
         }
 
-        mediaRecorder.onstop = () => {
+        mediaRecorder.onstop = async () => {
+            // ساخت Blob واقعی بعد از اینکه Recorder کامل داده‌ها را جمع کرد
             const blob = new Blob(chunksRef.current, { type: "audio/webm" })
-            const url = URL.createObjectURL(blob)
-
-            setAudioUrl(url)
-
-            console.log("Audio Blob:", blob)
+            console.log("Recorded Blob:", blob, "size:", blob.size)
+            // اگر size=0 → یعنی میکروفن mute، یا start/stop خیلی سریع
+            const text = await sendAudioToAPI(blob)
+            console.log("final text = ", text)
         }
 
         mediaRecorder.start()
@@ -76,11 +76,10 @@ export default function NotePage() {
     }
 
     async function stopRecording() {
-        mediaRecorderRef.current?.stop()
+        if (mediaRecorderRef.current) {
+            mediaRecorderRef.current.stop()
+        }
         setRecording(false)
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" })
-        const text = await sendAudioToAPI(blob)
-        console.log("final text = ", text)
     }
 
     useEffect(() => {

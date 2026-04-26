@@ -9,8 +9,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "No audio file" }, { status: 400 })
         }
 
-        // مهم: لاگ برای اطمینان از این‌که کلید خوانده شده است
-        console.log("GROQ KEY (first chars):", process.env.GROQ_API_KEY?.slice(0, 6))
+        //
+        console.log("-- audioFile:", audioFile)
+        console.log("-- size:", audioFile.size)
+        //
 
         const fd = new FormData()
         fd.append("file", audioFile)
