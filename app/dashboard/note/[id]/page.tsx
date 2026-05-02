@@ -33,22 +33,29 @@ export default function NotePage() {
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
     const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
-    const { mutate : voiceToTextAvalAiMutate } = voiceToTextAvalAi()
+    const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
 
-    // Debug only
+    // useEffect(() => {
+    //     if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
+    //     if (voiceToTextData?.data?.text) {
+    //         setNoteContent(prev => {
+    //             const newContent = (prev || "") + "\n" + voiceToTextData?.data?.text
+    //             return newContent
+    //         })
+    //     }
+    // }, [voiceToTextData])
+
+    // Add api response to end of contents of notes
     useEffect(() => {
-        console.log("voiceToTextIsError = ", voiceToTextIsError)
-        console.log("voiceToTextData = ", voiceToTextData)
-    }, [voiceToTextIsError, voiceToTextData])
-    useEffect(() => {
-        if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
-        if (voiceToTextData?.data?.text) {
+        console.log("==============================")
+        if (voiceToTextAvalAiIsSuccess) console.log("voiceToTextData = ", voiceToTextAvalAiData)
+        if (voiceToTextAvalAiIsSuccess) {
             setNoteContent(prev => {
-                const newContent = (prev || "") + "\n" + voiceToTextData?.data?.text
+                const newContent = (prev || "") + "\n" + voiceToTextAvalAiData?.data?.text
                 return newContent
             })
         }
-    }, [voiceToTextData])
+    }, [voiceToTextAvalAiData, voiceToTextAvalAiIsSuccess])
     async function sendAudioToAPI(blob: Blob) {
         const file = new File([blob], "voice.webm", { type: "audio/webm" })
 

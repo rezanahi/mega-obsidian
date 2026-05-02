@@ -154,7 +154,7 @@ export const voiceToTextAvalAi = () => {
                     Authorization: `Bearer aa-NFjmVEzkqbtyFydy3KlFHsEZL974gUHkvfecTYQV4VRxDOaa`,
                 }
             });
-            console.log("res = ", res)
+            console.log("res in hook +++++++++++ = ", res)
             return res
         },
         onSuccess: () => {
