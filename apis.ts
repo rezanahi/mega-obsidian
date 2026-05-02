@@ -137,3 +137,34 @@ export const useVoiceToText = () => {
         }
     });
 }
+
+export const voiceToTextAvalAi = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (file: any) => {
+            console.log("in the hook - file = ", file)
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("model", "scribe_v2");
+            formData.append("language", "fa");
+            formData.append("prompt", "");
+            const res = await axios.post(`https://api.avalai.ir/v1/audio/transcriptions`,
+                formData, {
+                headers: {
+                    Authorization: `Bearer aa-NFjmVEzkqbtyFydy3KlFHsEZL974gUHkvfecTYQV4VRxDOaa`,
+                }
+            });
+            console.log("res = ", res)
+            return res
+        },
+        onSuccess: () => {
+            // queryClient.invalidateQueries({
+            //     queryKey: ["notes"]
+            // });
+            // message.success("یادداشت حذف شد")
+        },
+        onError: () => {
+            message.error("خطا در تبدیل صوت به متن")
+        }
+    })
+}

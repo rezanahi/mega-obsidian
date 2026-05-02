@@ -5,7 +5,7 @@ import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
-import {useEditNote, useGetAllNotes, useGetNoteByTitle, useVoiceToText} from "@/apis";
+import {useEditNote, useGetAllNotes, useGetNoteByTitle, useVoiceToText, voiceToTextAvalAi} from "@/apis";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
@@ -32,14 +32,22 @@ export default function NotePage() {
     const [audioBlob, setAudioBlob] = useState(null)
     const [audioUrl, setAudioUrl] = useState<string | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
-    const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess} = useVoiceToText()
+    const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
+    const { mutate : voiceToTextAvalAiMutate } = voiceToTextAvalAi()
 
+    // Debug only
+    useEffect(() => {
+        console.log("voiceToTextIsError = ", voiceToTextIsError)
+        console.log("voiceToTextData = ", voiceToTextData)
+    }, [voiceToTextIsError, voiceToTextData])
     useEffect(() => {
         if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
-        setNoteContent(prev => {
-            const newContent = (prev || "") + "\n" + voiceToTextData?.data?.text
-            return newContent
-        })
+        if (voiceToTextData?.data?.text) {
+            setNoteContent(prev => {
+                const newContent = (prev || "") + "\n" + voiceToTextData?.data?.text
+                return newContent
+            })
+        }
     }, [voiceToTextData])
     async function sendAudioToAPI(blob: Blob) {
         const file = new File([blob], "voice.webm", { type: "audio/webm" })
@@ -52,6 +60,8 @@ export default function NotePage() {
         //     body: formData,
         // })
         const res = await voiceToText(formData)
+        console.log("YOHAHA = ", file)
+        voiceToTextAvalAiMutate(file)
 
         // const data = voiceToTextData
         // console.log("AI text:", data.text)

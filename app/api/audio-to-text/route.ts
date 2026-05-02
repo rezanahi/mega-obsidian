@@ -17,6 +17,7 @@ export async function POST(req: Request) {
         const fd = new FormData()
         fd.append("file", audioFile)
         fd.append("model", "whisper-large-v3")
+        fd.append("language", "fa")
 
         const groqRes = await fetch(
             "https://api.groq.com/openai/v1/audio/transcriptions",
