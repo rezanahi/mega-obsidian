@@ -10,9 +10,11 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import remarkWikiLink from 'remark-wiki-link';
-import {EditOutlined, MoreOutlined, ReadOutlined, AudioOutlined  } from '@ant-design/icons';
+import {EditOutlined, MoreOutlined, ReadOutlined, AudioOutlined, LoadingOutlined} from '@ant-design/icons';
 import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
+import {Spin} from "antd";
+import {formatTime} from "@/utils/methods";
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
     { ssr: false }
@@ -29,8 +31,8 @@ export default function NotePage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [recording, setRecording] = useState<boolean>(false)
-    const [audioBlob, setAudioBlob] = useState(null)
-    const [audioUrl, setAudioUrl] = useState<string | null>(null)
+    const [recordTime, setRecordTime] = useState(0)
+    const timerRef = useRef<NodeJS.Timeout | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
     const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
     const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
@@ -77,17 +79,17 @@ export default function NotePage() {
     }
 
     async function startRecording() {
+        // اگر تایمر قبلی هنوز فعال است، پاکش کن
+        if (timerRef.current) {
+            clearInterval(timerRef.current);
+        }
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-
         const mediaRecorder = new MediaRecorder(stream)
-
         mediaRecorderRef.current = mediaRecorder
         chunksRef.current = []
-
         mediaRecorder.ondataavailable = (event) => {
             chunksRef.current.push(event.data)
         }
-
         mediaRecorder.onstop = async () => {
             // ساخت Blob واقعی بعد از اینکه Recorder کامل داده‌ها را جمع کرد
             const blob = new Blob(chunksRef.current, { type: "audio/webm" })
@@ -102,9 +104,12 @@ export default function NotePage() {
             //     })
             // }
         }
-
         mediaRecorder.start()
         setRecording(true)
+        setRecordTime(0)
+        timerRef.current = setInterval(() => {
+            setRecordTime(prev => prev + 1)
+        }, 1000)
     }
 
     async function stopRecording() {
@@ -112,6 +117,10 @@ export default function NotePage() {
             mediaRecorderRef.current.stop()
         }
         setRecording(false)
+        if (timerRef.current) {
+            console.log("=== I Deleted It ===")
+            clearInterval(timerRef.current)
+        }
     }
 
     useEffect(() => {
@@ -156,19 +165,27 @@ export default function NotePage() {
 
     return (
         <div className="flex flex-col justify-start gap-3 h-full overflow-y-auto">
-            <div className={`h-12 shrink-0 flex gap-1 justify-start items-center px-3 border-b border-gray-700`}>
+            <div className={`h-12 shrink-0 flex gap-1 justify-end items-center px-3 border-b border-gray-700`}>
                 {
+                    voiceToTextAvalAiIsPending ?
+                        <Spin indicator={<LoadingOutlined spin />} size={"small"}></Spin> :
                     recording ?
-                        <button
-                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
-                            onClick={() => {
-                                stopRecording()
-                            }}
-                        >
-                            <RecordCircleIcon width={16} height={16} fill={"red"}></RecordCircleIcon>
-                        </button>
+                        <div className={'flex justify-start items-center gap-2 '}>
+                            <div className={'flex justify-start gap-4 items-center'}>
+                                <p>Recording...</p>
+                                <p className={''}>{formatTime(recordTime)}</p>
+                            </div>
+                            <button
+                                className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                                onClick={() => {
+                                    stopRecording()
+                                }}
+                            >
+                                <RecordCircleIcon width={16} height={16} fill={"red"}></RecordCircleIcon>
+                            </button>
+                        </div>
                         : <button
-                            className="flex justify-between ml-auto items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
+                            className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
                             onClick={() => {
                                 startRecording()
                             }}
