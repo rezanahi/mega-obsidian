@@ -3,3 +3,5 @@ export interface Note {
     title: string | null;
     content: string;
 }
+
+export type SidebarModeType = 'file' | 'search'

@@ -2,16 +2,16 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { PlusOutlined } from "@ant-design/icons";
+import {FolderOutlined, PlusOutlined} from "@ant-design/icons";
 import { LogoutOutlined } from '@ant-design/icons';
-import {message} from "antd";
+import {Input, message} from "antd";
 import {useRouter, usePathname} from "next/navigation";
 import axios from "axios";
 import {Note} from "@/types";
 import {useAddNote, useDeleteNote, useGetAllNotes} from "@/apis";
-import { DeleteOutlined, EditOutlined, NodeIndexOutlined } from "@ant-design/icons";
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
+import { DeleteOutlined, EditOutlined, NodeIndexOutlined, SearchOutlined  } from "@ant-design/icons";
+import {useAppDispatch, useAppSelector} from "@/app/store/hooks";
+import {setSidebarMode} from "@/app/store/slices/sidebarSlice";
 
 
 
@@ -22,6 +22,8 @@ export default function Sidebar() {
     const { mutateAsync: addNote } = useAddNote()
     const { mutate: deleteNote } = useDeleteNote()
     const pathname = usePathname();
+    const dispatch = useAppDispatch()
+    const { sidebarMode } = useAppSelector(state => state.sidebar)
 
     // Close Context Menu
     useEffect(() => {
@@ -58,6 +60,12 @@ export default function Sidebar() {
             {/* Header */}
             <div className="p-3 h-12 border-b border-gray-700 flex justify-start gap-3">
                 <span className="font-semibold mr-auto">Notes</span>
+                <button onClick={() => dispatch(setSidebarMode("search"))} className={'text-green-400 hover:text-green-300 cursor-pointer'}>
+                    <SearchOutlined />
+                </button>
+                <button onClick={() => dispatch(setSidebarMode("file"))} className={'text-green-400 hover:text-green-300 cursor-pointer'}>
+                    <FolderOutlined />
+                </button>
                 <button onClick={() => {router.push('/dashboard/graph')}} className="text-green-400 hover:text-green-300">
                     <NodeIndexOutlined />
                 </button>
@@ -66,30 +74,47 @@ export default function Sidebar() {
                 </button>
             </div>
 
-            {/* Notes list */}
-            <div className="overflow-y-auto">
-                {notes?.map((note : Note) => {
-                    const isActive = pathname === `/dashboard/note/${note.id}`;
-                    return (
-                        <Link
-                            onContextMenu={(e) => {
-                                e.preventDefault();
-                                setContextMenu({
-                                    visible: true,
-                                    x: e.clientX,
-                                    y: e.clientY,
-                                    noteId: note.id,
-                                });
-                            }}
-                            key={note.id}
-                            href={`/dashboard/note/${note.id}`}
-                            className={`block px-3 py-2 ${isActive ? "bg-gray-600 text-white" : "hover:bg-gray-700"} transition`}
-                        >
-                            {note.title || "Untitled"}
-                        </Link>
-                    )
-                })}
-            </div>
+            {
+                sidebarMode === 'file' ?
+                    <div className="overflow-y-auto">
+                        {notes?.map((note : Note) => {
+                            const isActive = pathname === `/dashboard/note/${note.id}`;
+                            return (
+                                <Link
+                                    onContextMenu={(e) => {
+                                        e.preventDefault();
+                                        setContextMenu({
+                                            visible: true,
+                                            x: e.clientX,
+                                            y: e.clientY,
+                                            noteId: note.id,
+                                        });
+                                    }}
+                                    key={note.id}
+                                    href={`/dashboard/note/${note.id}`}
+                                    className={`block px-3 py-2 ${isActive ? "bg-gray-600 text-white" : "hover:bg-gray-700"} transition`}
+                                >
+                                    {note.title || "Untitled"}
+                                </Link>
+                            )
+                        })}
+                    </div>
+                :
+                <div className={`px-3 py-3 flex flex-col gap-2`}>
+                    <div className={'w-full h-auto relative'}>
+                        <SearchOutlined className={'absolute top-1/2 bottom-1/2 left-3'}/>
+                        <Input
+
+                            placeholder={'Search ... '}
+                            size={'large'}
+                            className={'!bg-transparent !w-full !h-full !pl-10 !text-white !white-placeholder'}
+                        />
+                    </div>
+                    <div>
+
+                    </div>
+                </div>
+            }
 
             {/* Footer */}
             <div className="p-3 border-t border-gray-700 flex justify-between mt-auto">

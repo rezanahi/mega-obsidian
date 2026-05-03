@@ -1,11 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit"
+import {SidebarModeType} from "@/types";
 
 interface SidebarState {
     searchValue: string
+    sidebarMode: SidebarModeType
 }
 
 const initialState: SidebarState = {
-    searchValue: ''
+    searchValue: '',
+    sidebarMode: "file"
 }
 
 const sidebarSlice = createSlice({
@@ -14,10 +17,13 @@ const sidebarSlice = createSlice({
     reducers: {
         setSearchValue: (state, action: PayloadAction<string>) => {
             state.searchValue = action.payload
+        },
+        setSidebarMode: (state, action: PayloadAction<SidebarModeType>) => {
+            state.sidebarMode = action.payload
         }
     }
 })
 
 
-export const { setSearchValue } = sidebarSlice.actions
+export const { setSearchValue, setSidebarMode } = sidebarSlice.actions
 export default sidebarSlice.reducer

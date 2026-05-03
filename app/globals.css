@@ -182,3 +182,8 @@ body {
   background: #1f1f1f;
 }
 
+.white-placeholder::placeholder {
+  color: white;
+  opacity: 1;
+}
+
