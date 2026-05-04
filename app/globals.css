@@ -181,9 +181,14 @@ body {
 .markdown tr:nth-child(even) {
   background: #1f1f1f;
 }
-
+.white-placeholder {
+  border: 1px solid rebeccapurple;
+}
 .white-placeholder::placeholder {
   color: white;
   opacity: 1;
 }
 
+input::placeholder {
+  color: white;
+}

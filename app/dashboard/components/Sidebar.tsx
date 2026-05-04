@@ -11,7 +11,8 @@ import {Note} from "@/types";
 import {useAddNote, useDeleteNote, useGetAllNotes} from "@/apis";
 import { DeleteOutlined, EditOutlined, NodeIndexOutlined, SearchOutlined  } from "@ant-design/icons";
 import {useAppDispatch, useAppSelector} from "@/app/store/hooks";
-import {setSidebarMode} from "@/app/store/slices/sidebarSlice";
+import {setSearchValue, setSidebarMode} from "@/app/store/slices/sidebarSlice";
+import {useDebounce} from "@/app/hooks/useDebounce";
 
 
 
@@ -23,7 +24,8 @@ export default function Sidebar() {
     const { mutate: deleteNote } = useDeleteNote()
     const pathname = usePathname();
     const dispatch = useAppDispatch()
-    const { sidebarMode } = useAppSelector(state => state.sidebar)
+    const { sidebarMode, searchValue } = useAppSelector(state => state.sidebar)
+    const debouncedSearchValue = useDebounce(searchValue)
 
     // Close Context Menu
     useEffect(() => {
@@ -100,18 +102,24 @@ export default function Sidebar() {
                         })}
                     </div>
                 :
-                <div className={`px-3 py-3 flex flex-col gap-2`}>
+                <div className={`px-3 py-3 flex flex-col gap-4`}>
                     <div className={'w-full h-auto relative'}>
                         <SearchOutlined className={'absolute top-1/2 bottom-1/2 left-3'}/>
                         <Input
-
+                            value={searchValue}
+                            onChange={(e) => dispatch(setSearchValue(e.target.value))}
                             placeholder={'Search ... '}
                             size={'large'}
                             className={'!bg-transparent !w-full !h-full !pl-10 !text-white !white-placeholder'}
                         />
                     </div>
                     <div>
-
+                        {
+                            !searchValue ?
+                                <p>No Matches Found.</p> :
+                                <>
+                                </>
+                        }
                     </div>
                 </div>
             }
