@@ -1,6 +1,6 @@
 "use client";
 import {useEffect, useRef, useState} from "react";
-import { useParams } from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
 import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
@@ -10,7 +10,14 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
 import remarkWikiLink from 'remark-wiki-link';
-import {EditOutlined, MoreOutlined, ReadOutlined, AudioOutlined, LoadingOutlined} from '@ant-design/icons';
+import {
+    EditOutlined,
+    MoreOutlined,
+    ReadOutlined,
+    AudioOutlined,
+    LoadingOutlined,
+    NodeIndexOutlined
+} from '@ant-design/icons';
 import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
 import {Spin} from "antd";
@@ -21,6 +28,7 @@ const MarkdownEditor = dynamic(
 );
 export default function NotePage() {
     const { id } = useParams();
+    const router = useRouter();
     const isFirstRender = useRef(true)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const chunksRef = useRef<Blob[]>([])
@@ -209,6 +217,11 @@ export default function NotePage() {
                             <EditOutlined></EditOutlined>
                         </button>
                 }
+                <button
+                    onClick={() => {router.push('/dashboard/graph')}}
+                    className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
+                    <NodeIndexOutlined />
+                </button>
                 <button
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
                     onClick={() => console.log("more action")}

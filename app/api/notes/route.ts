@@ -7,6 +7,7 @@ export async function GET(req: NextRequest) {
     const user = await getUserFromToken();
     const { searchParams } = new URL(req.url);
     const title = searchParams.get("title");
+    const searchTerm = searchParams.get("search")
 
     if (title) {
         const note = await prisma.note.findUnique({
@@ -22,19 +23,33 @@ export async function GET(req: NextRequest) {
         } else {
             return NextResponse.json({ message: "یادداشتی با این عنوان نداریم", status: 'success' }, {status: 404});
         }
-    } else {
+    }
+
+    if (searchTerm) {
         const notes = await prisma.note.findMany({
-            where: { userId: user.id },
+            where: {userId: user.id, title: {contains: searchTerm, mode: 'insensitive'}} ,
             select: {
                 id: true,
                 title: true,
                 updatedAt: true,
             },
             orderBy: { createdAt: "desc" },
-        });
+        })
 
         return NextResponse.json({ notes });
     }
+
+    const notes = await prisma.note.findMany({
+        where: { userId: user.id },
+        select: {
+            id: true,
+            title: true,
+            updatedAt: true,
+        },
+        orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ notes });
 
 }
 

@@ -20,6 +20,23 @@ export const useGetAllNotes = () => {
     };
 }
 
+// Get Searched Notes
+export const useGetAllNotesBySearch = (search: string) => {
+    const { data, isLoading, isError, error } = useQuery<any, any>({
+        queryKey: ["note", search],
+        queryFn: async ({}) => {
+            if (search) {
+                const res = await axios.get(`/api/notes?search=${search}`)
+                return res
+            }
+        },
+        enabled: !!search
+    })
+    return {
+        data, isLoading, isError, error
+    }
+}
+
 // Get One Note By Title
 export const useGetNoteByTitle = (title: string | null) => {
     const { data, isLoading, isSuccess, isError } = useQuery<any, any>({

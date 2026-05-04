@@ -22,7 +22,7 @@ export default async function DashboardLayout({ children } : any) {
             <ReduxProvider>
                 <div className="flex h-screen bg-[#1e1e1e] text-gray-200">
                     {/* sidebar */}
-                    <aside className="w-64 border-r border-gray-700 bg-[#252526]">
+                    <aside className="w-64 h-full border-r border-gray-700 bg-[#252526]">
                         <Sidebar />
                     </aside>
 

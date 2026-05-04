@@ -3,7 +3,23 @@
 import { useEffect, useRef } from "react";
 import { Network } from "vis-network";
 import {useGetAllGraph} from "@/apis";
-import {useRouter} from "next/navigation";
+import {useParams, useRouter} from "next/navigation";
+import {Spin} from "antd";
+import {
+    AudioOutlined,
+    EditOutlined,
+    LoadingOutlined,
+    MoreOutlined,
+    NodeIndexOutlined,
+    ReadOutlined
+} from "@ant-design/icons";
+import {formatTime} from "@/utils/methods";
+import {RecordCircleIcon} from "@/components/icons";
+import ReactMarkdown from "react-markdown";
+import Link from "next/link";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import remarkWikiLink from "remark-wiki-link";
 
 function NoteLinkCount (nodeId: any, links: any) {
     const sourceIdCount = links.filter((link: any) => link.sourceId === nodeId).length
@@ -12,10 +28,12 @@ function NoteLinkCount (nodeId: any, links: any) {
 }
 
 export default function GraphPage() {
+    const { id } = useParams();
     const container = useRef<HTMLDivElement>(null);
     const networkRef = useRef<any>(null);
     const {data: graphData, isSuccess: graphDataIsSuccess} = useGetAllGraph()
     const router = useRouter()
+
 
     useEffect(() => {
         if (!graphDataIsSuccess || !container.current) return;
