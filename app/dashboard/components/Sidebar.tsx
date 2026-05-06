@@ -19,7 +19,7 @@ import {openModal} from "@/app/store/slices/modalSlice";
 
 export default function Sidebar() {
     const {notes, isLoading} = useGetAllNotes()
-    const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; }>({visible: false, x: 0, y: 0, noteId: null,});
+    const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; props: any}>({visible: false, x: 0, y: 0, noteId: null, props: {title: ''}});
     const router = useRouter();
     const { mutateAsync: addNote } = useAddNote()
     const { mutate: deleteNote } = useDeleteNote()
@@ -98,6 +98,9 @@ export default function Sidebar() {
                                                 x: e.clientX,
                                                 y: e.clientY,
                                                 noteId: note.id,
+                                                props: {
+                                                    title: note.title
+                                                }
                                             });
                                         }}
                                         key={note.id}
@@ -139,6 +142,9 @@ export default function Sidebar() {
                                                         x: e.clientX,
                                                         y: e.clientY,
                                                         noteId: note.id,
+                                                        props: {
+                                                            title: note.title
+                                                        }
                                                     });
                                                 }}
                                                 key={note.id}
@@ -174,7 +180,7 @@ export default function Sidebar() {
                 >
                     <button
                         className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-gray-200"
-                        onClick={() => dispatch(openModal({modalType: 'EditNoteTitleModal', modalProps: {noteId: 'sdf'}}))}
+                        onClick={() => dispatch(openModal({modalType: 'EditNoteTitleModal', modalProps: {noteId: contextMenu.noteId, noteTitle: contextMenu.props?.title}}))}
                     >
                         <EditOutlined></EditOutlined>
                         تغییر عنوان

@@ -44,7 +44,7 @@ export async function PUT(
 
     const existingByTitle = await prisma.note.findFirst({
         where: {
-            title: title,
+            title: title, userId: user.id,
             NOT: {
                 id: noteId
             }}
@@ -122,5 +122,39 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
+}
+
+export async function PATCH(
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+){
+    const user = await getUserFromToken();
+    const { id } = await params;
+    const noteId = Number(id);
+    const { title } = await req.json();
+    const note = await prisma.note.findUnique({
+        where: { id: noteId, userId: user.id },
+    })
+
+    if (!title) {
+        return NextResponse.json({ message: 'عنوان اجباری است' }, { status: 300 })
+    }
+
+    const existingByTitle = await prisma.note.findFirst({
+        where: {
+            title: title, userId: user.id,
+            NOT: {
+                id: noteId
+            }}
+    })
+    if (existingByTitle) {
+        return NextResponse.json({ message: 'یادداشتی با این عنوان وجود دارد' }, { status: 309 })
+    }
+    const newNote = await prisma.note.updateMany({
+        where: { id: noteId, userId: user.id },
+        data: { title: title },
+    });
+    return NextResponse.json({ success: true, message: 'عنوان بروزرسانی شد' }, {status: 200});
+
 }
 

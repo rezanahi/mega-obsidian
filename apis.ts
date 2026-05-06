@@ -78,6 +78,30 @@ export const useEditNote = (id: string) => {
     });
 }
 
+// Edit Note Title Api
+export const useEditNoteTitle = ({id} : {id: string}) => {
+    const queryClient = useQueryClient()
+    const [messageApi, contextHolder] = message.useMessage();
+    return useMutation({
+        mutationFn: async ({title}: {title: string}) => {
+            return await axios.patch(`/api/notes/${id}`, { title });
+        },
+        onSuccess: (data) => {
+            message.success(data?.data?.message);
+            queryClient.invalidateQueries({
+                queryKey: ["notes"]
+            }); // ریفرش کردن GET;
+            // setTimeout(() => messageApi.success(data?.data?.message), 0);
+        },
+        onError: (error: any) => {
+            const msg = error?.response?.data?.message
+            if (msg) {
+                message.error(msg)
+            }
+        }
+    });
+}
+
 // Add Note Api
 export const useAddNote = () => {
     const queryClient = useQueryClient()
