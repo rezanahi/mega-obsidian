@@ -13,6 +13,7 @@ import { DeleteOutlined, EditOutlined, NodeIndexOutlined, SearchOutlined  } from
 import {useAppDispatch, useAppSelector} from "@/app/store/hooks";
 import {setSearchValue, setSidebarMode} from "@/app/store/slices/sidebarSlice";
 import {useDebounce} from "@/app/hooks/useDebounce";
+import {openModal} from "@/app/store/slices/modalSlice";
 
 
 
@@ -173,7 +174,7 @@ export default function Sidebar() {
                 >
                     <button
                         className="flex justify-between items-center cursor-pointer w-full text-left px-4 py-2 hover:bg-[#3a3a3a] text-gray-200"
-                        onClick={() => console.log("Rename")}
+                        onClick={() => dispatch(openModal({modalType: 'EditNoteTitleModal', modalProps: {noteId: 'sdf'}}))}
                     >
                         <EditOutlined></EditOutlined>
                         تغییر عنوان
