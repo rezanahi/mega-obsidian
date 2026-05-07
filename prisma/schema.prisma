@@ -28,6 +28,8 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  embedding Float[]
+
   userId Int
   user   User @relation(fields: [userId], references: [id])
 

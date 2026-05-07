@@ -2,6 +2,8 @@ import prisma from "@/lib/prisma";
 import { NextResponse, NextRequest} from "next/server";
 import { getUserFromToken } from "@/utils/auth";
 import {extractWikiLinks} from "@/utils/methods";
+import { getEmbedding } from "@/lib/embedding";
+
 
 // Functions / Helpers
 function replaceWikiLinkTitle(content: string, oldTitle: string, newTitle: string) {
@@ -134,7 +136,7 @@ export async function PUT(
         await prisma.$transaction(async (tx) => {
             const note = await tx.note.findFirst({
                 where: { id: noteId, userId: user.id },
-                select: { id: true, title: true }
+                select: { id: true, title: true, content: true }
             });
 
             if (!note) {
@@ -142,6 +144,7 @@ export async function PUT(
             }
 
             const oldTitle = note.title;
+            const oldContent = note.content ?? "";
 
             const existingByTitle = await tx.note.findFirst({
                 where: {
@@ -155,13 +158,28 @@ export async function PUT(
                 throw new Error("TITLE_ALREADY_EXISTS");
             }
 
-            // اگر title عوض شده، backlink content های دیگر هم آپدیت شوند
-            if (oldTitle !== title) {
-                await tx.note.update({
-                    where: { id: noteId },
-                    data: { title }
-                });
+            // ✅ بررسی اینکه آیا embedding باید آپدیت شود
+            const textChanged = oldTitle !== title || oldContent !== content;
 
+            let embedding: number[] | undefined;
+
+            if (textChanged) {
+                const textForEmbedding = `${title}\n\n${content}`;
+                embedding = await getEmbedding(textForEmbedding);
+            }
+
+            // ✅ آپدیت خود note
+            await tx.note.update({
+                where: { id: noteId },
+                data: {
+                    title,
+                    content,
+                    ...(embedding && { embedding })
+                }
+            });
+
+            // ✅ اگر title عوض شده backlink ها اصلاح شوند
+            if (oldTitle !== title) {
                 const backlinks = await tx.noteLink.findMany({
                     where: { targetId: noteId },
                     select: { sourceId: true }
@@ -205,18 +223,10 @@ export async function PUT(
                 }
             }
 
-            // آپدیت خود note
-            await tx.note.update({
-                where: { id: noteId },
-                data: {
-                    title,
-                    content
-                }
-            });
-
-            // sync لینک‌های خود note از روی content جدید
+            // ✅ sync لینک‌های خود note
             await syncNoteLinksTx(tx, noteId, content, user.id);
         });
+
 
         return NextResponse.json({ success: true }, { status: 200 });
     } catch (error: any) {
@@ -279,7 +289,7 @@ export async function PATCH(
         await prisma.$transaction(async (tx) => {
             const note = await tx.note.findFirst({
                 where: { id: noteId, userId: user.id },
-                select: { id: true, title: true }
+                select: { id: true, title: true, content: true }
             });
 
             if (!note) {
@@ -288,6 +298,7 @@ export async function PATCH(
 
             const oldTitle = note.title;
             const newTitle = title.trim();
+            const content = note.content ?? "";
 
             if (oldTitle === newTitle) {
                 return;
@@ -305,9 +316,16 @@ export async function PATCH(
                 throw new Error("TITLE_ALREADY_EXISTS");
             }
 
+            // ✅ گرفتن embedding جدید
+            const textForEmbedding = `${newTitle}\n\n${content}`;
+            const embedding = await getEmbedding(textForEmbedding);
+
             await tx.note.update({
                 where: { id: noteId },
-                data: { title: newTitle }
+                data: {
+                    title: newTitle,
+                    embedding
+                }
             });
 
             const backlinks = await tx.noteLink.findMany({
@@ -352,6 +370,7 @@ export async function PATCH(
                 }
             }
         });
+
 
         return NextResponse.json(
             { success: true, message: "عنوان بروزرسانی شد" },

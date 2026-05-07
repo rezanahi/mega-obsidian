@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import {
     useEditNote,
     useGetAllBacklinks,
-    useGetAllNotes,
+    useGetAllNotes, useGetSuggestedLinks,
     useGetNoteByTitle,
     useVoiceToText,
     voiceToTextAvalAi
@@ -52,6 +52,7 @@ export default function NotePage() {
     const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
     const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
     const { data: backlinksData, isSuccess: backlinksIsSuccess, isLoading: backlinksIsLoading } = useGetAllBacklinks({id: id as string})
+    const { data: embeddingData,} = useGetSuggestedLinks({id: id as string})
 
     // useEffect(() => {
     //     if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
@@ -283,7 +284,7 @@ export default function NotePage() {
             </div>
             {
                 backlinksIsSuccess && !!backlinksData?.backlinks?.length &&
-                <div className={'h-40 shrink-0 border-t border-gray-500/50 py-4 mx-8'}>
+                <div className={'h-auto pb-8 shrink-0 border-t border-gray-500/50 pt-4 mx-8'}>
                     <h3 className={'text-gray-300/80'}>Backlinks : </h3>
                     {
                         backlinksData?.backlinks?.map((bl : any) => {

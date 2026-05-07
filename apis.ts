@@ -260,3 +260,20 @@ export const useGetAllBacklinks = ({id}: {id: string}) => {
         isSuccess
     };
 }
+
+// Embedding
+export const useGetSuggestedLinks = ({id}: {id: string}) => {
+    const { data, isLoading, isSuccess } = useQuery<any, any>({
+        queryKey: ["suggested-links"],
+        queryFn: async () => {
+            const res = await axios.get(`/api/notes/${id}/suggested-links`);
+            return res.data
+        },
+        enabled: !!id
+    });
+    return {
+        data ,
+        isLoading,
+        isSuccess
+    };
+}

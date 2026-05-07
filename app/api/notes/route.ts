@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import {NextRequest, NextResponse} from "next/server";
 import { getUserFromToken } from "@/utils/auth";
+import {getEmbedding} from "@/lib/embedding";
 
 // Note List
 export async function GET(req: NextRequest) {
@@ -60,10 +61,13 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title } = body;
     if ( title ) {
+        const textForEmbedding = `${title}\n\n `;
+        const embedding = await getEmbedding(textForEmbedding);
         const note = await prisma.note.create({
             data: {
                 title: title,
                 content: "",
+                embedding: embedding,
                 userId: user.id,
             },
         })
