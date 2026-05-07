@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Network } from "vis-network";
-import {useGetAllGraph} from "@/apis";
+import {useGetAllGraph, useGetGraphById} from "@/apis";
 import {useParams, useRouter} from "next/navigation";
 import {Spin} from "antd";
 import {
@@ -31,7 +31,8 @@ export default function GraphPage() {
     const { id } = useParams();
     const container = useRef<HTMLDivElement>(null);
     const networkRef = useRef<any>(null);
-    const {data: graphData, isSuccess: graphDataIsSuccess} = useGetAllGraph()
+    // const {data: graphData, isSuccess: graphDataIsSuccess} = useGetAllGraph()
+    const {data: graphData, isSuccess: graphDataIsSuccess } = useGetGraphById({id: id as string})
     const router = useRouter()
 
 

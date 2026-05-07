@@ -176,6 +176,22 @@ export const useGetAllGraph = () => {
     };
 }
 
+// Get Graph Data For One Note
+export const useGetGraphById = ({id}: {id: string}) => {
+    const { data, isLoading, isSuccess } = useQuery<any, any>({
+        queryKey: ["graphById", id],
+        queryFn: async () => {
+            const res = await axios.get(`/api/graph/${id}`);
+            return res.data
+        },
+    });
+    return {
+        data ,
+        isLoading,
+        isSuccess
+    };
+}
+
 // Voice To Text
 export const useVoiceToText = () => {
     const queryClient = useQueryClient()
