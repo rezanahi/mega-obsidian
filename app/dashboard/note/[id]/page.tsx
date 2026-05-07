@@ -5,7 +5,14 @@ import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
-import {useEditNote, useGetAllNotes, useGetNoteByTitle, useVoiceToText, voiceToTextAvalAi} from "@/apis";
+import {
+    useEditNote,
+    useGetAllBacklinks,
+    useGetAllNotes,
+    useGetNoteByTitle,
+    useVoiceToText,
+    voiceToTextAvalAi
+} from "@/apis";
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import remarkBreaks from "remark-breaks"
@@ -16,7 +23,7 @@ import {
     ReadOutlined,
     AudioOutlined,
     LoadingOutlined,
-    NodeIndexOutlined
+    NodeIndexOutlined, ArrowRightOutlined
 } from '@ant-design/icons';
 import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
@@ -44,6 +51,7 @@ export default function NotePage() {
     const { mutate : updateNote } = useEditNote(String(id))
     const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
     const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
+    const { data: backlinksData, isSuccess: backlinksIsSuccess, isLoading: backlinksIsLoading } = useGetAllBacklinks({id: id as string})
 
     // useEffect(() => {
     //     if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
@@ -273,7 +281,22 @@ export default function NotePage() {
                         </div>
                 }
             </div>
-
+            {
+                backlinksIsSuccess && !!backlinksData?.backlinks?.length &&
+                <div className={'h-40 shrink-0 border-t border-gray-500/50 py-4 mx-8'}>
+                    <h3 className={'text-gray-300/80'}>Backlinks : </h3>
+                    {
+                        backlinksData?.backlinks?.map((bl : any) => {
+                            return (
+                                <div className={`flex justify-start gap-4 items-center text-gray-400/70`} key={bl.id}>
+                                    <Link href={`/dashboard/note/${bl.id}`}>{bl.title}</Link>
+                                    <ArrowRightOutlined />
+                                </div>
+                            )
+                        })
+                    }
+                </div>
+            }
         </div>
     )
 }

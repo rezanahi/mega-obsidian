@@ -243,3 +243,20 @@ export const voiceToTextAvalAi = () => {
         }
     })
 }
+
+// Get All Backlinks Data
+export const useGetAllBacklinks = ({id}: {id: string}) => {
+    const { data, isLoading, isSuccess } = useQuery<any, any>({
+        queryKey: ["backlinks"],
+        queryFn: async () => {
+            const res = await axios.get(`/api/notes/${id}/backlinks`);
+            return res.data
+        },
+        enabled: !!id
+    });
+    return {
+        data ,
+        isLoading,
+        isSuccess
+    };
+}
