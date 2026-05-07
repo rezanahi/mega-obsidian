@@ -218,7 +218,7 @@ export default function NotePage() {
                         </button>
                 }
                 <button
-                    onClick={() => {router.push('/dashboard/graph')}}
+                    onClick={() => {router.push(`/dashboard/graph/${id}`)}}
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
                     <NodeIndexOutlined />
                 </button>

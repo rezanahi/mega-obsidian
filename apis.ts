@@ -56,6 +56,24 @@ export const useGetNoteByTitle = (title: string | null) => {
     };
 }
 
+// Get Note By Id
+export const useGetNoteById = ({id} :{id: string | undefined}) => {
+    const { data, isLoading, isSuccess, isError } = useQuery<any, any>({
+        queryKey: ["note", id],
+        queryFn: async ({ queryKey }) => {
+            const res = await axios.get(`/api/notes/${id}`)
+            return res
+        },
+        enabled: !!id
+    });
+    return {
+        data ,
+        isLoading ,
+        isSuccess ,
+        isError
+    };
+}
+
 
 // Edit Note Api
 export const useEditNote = (id: string) => {

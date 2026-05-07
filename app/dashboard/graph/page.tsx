@@ -73,19 +73,14 @@ export default function GraphPage() {
     }, [graphDataIsSuccess, graphData]);
 
     return (
-        <div className="flex flex-col justify-start gap-3 h-full overflow-y-auto relative">
-            <div className={`h-24 z-50! absolute top-0 left-0 right-0 bg-transparent flex justify-start items-center shrink-0 flex gap-1 justify-end items-center px-6`}>
-                <h3 className={'font-bold text-lg'}>Graph View</h3>
-            </div>
-            <div className="flex-1 px-6 pb-6 grow">
-                <div
-                    ref={container}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                />
-            </div>
+        <div className="flex-1 px-6 pb-6 grow">
+            <div
+                ref={container}
+                style={{
+                    width: "100%",
+                    height: "100%",
+                }}
+            />
         </div>
     );
 }
