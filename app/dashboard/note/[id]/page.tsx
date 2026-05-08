@@ -151,7 +151,7 @@ export default function NotePage() {
                 setSaving(true);
                 updateNote({title: noteTitle || '', content: noteContent})
                 setSaving(false)
-            }, 1500);
+            }, 500);
             return () => clearTimeout(timeout);
         }
     }, [noteTitle, noteContent]);
