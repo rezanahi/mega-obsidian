@@ -55,7 +55,6 @@ export default function NotePage() {
     const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
     const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
     const { data: backlinksData, isSuccess: backlinksIsSuccess, isLoading: backlinksIsLoading } = useGetAllBacklinks({id: id as string})
-    const { data: embeddingData,} = useGetSuggestedLinks({id: id as string})
 
     // useEffect(() => {
     //     if (voiceToTextIsSuccess) console.log("voiceToTextData = ", voiceToTextData)
@@ -235,7 +234,7 @@ export default function NotePage() {
                     <NodeIndexOutlined />
                 </button>
                 <button
-                    onClick={() => {dispatch(openModal({modalType: 'SuggestedLinksModal'}))}}
+                    onClick={() => {dispatch(openModal({modalType: 'SuggestedLinksModal', modalProps: {noteId: id, noteTitle: noteTitle}}))}}
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
                     <BulbOutlined />
                 </button>
