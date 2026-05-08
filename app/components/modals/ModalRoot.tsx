@@ -2,9 +2,11 @@
 
 import { useAppSelector } from "@/app/store/hooks"
 import {EditNoteTitleModal} from "@/app/components/modals/EditNoteTitleModal";
+import {SuggestedLinksModal} from "@/app/components/modals/SuggestedLinksModal";
 
 const MODAL_COMPONENTS: any = {
     EditNoteTitleModal: EditNoteTitleModal,
+    SuggestedLinksModal: SuggestedLinksModal
 }
 
 export default function ModalRoot() {

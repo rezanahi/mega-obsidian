@@ -23,12 +23,14 @@ import {
     ReadOutlined,
     AudioOutlined,
     LoadingOutlined,
-    NodeIndexOutlined, ArrowRightOutlined
+    NodeIndexOutlined, ArrowRightOutlined, BulbOutlined
 } from '@ant-design/icons';
 import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
 import {Spin} from "antd";
 import {formatTime} from "@/utils/methods";
+import {useAppDispatch} from "@/app/store/hooks";
+import {openModal} from "@/app/store/slices/modalSlice";
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
     { ssr: false }
@@ -36,6 +38,7 @@ const MarkdownEditor = dynamic(
 export default function NotePage() {
     const { id } = useParams();
     const router = useRouter();
+    const dispatch = useAppDispatch()
     const isFirstRender = useRef(true)
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const chunksRef = useRef<Blob[]>([])
@@ -230,6 +233,11 @@ export default function NotePage() {
                     onClick={() => {router.push(`/dashboard/graph/${id}`)}}
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
                     <NodeIndexOutlined />
+                </button>
+                <button
+                    onClick={() => {dispatch(openModal({modalType: 'SuggestedLinksModal'}))}}
+                    className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
+                    <BulbOutlined />
                 </button>
                 <button
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200"
