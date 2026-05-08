@@ -5,6 +5,7 @@ import { Note } from "@/types"
 import axios from "axios";
 import NoteEditor from "@/components/NoteEditor";
 import dynamic from "next/dynamic";
+import { setNoteContent, setNoteTitle } from "@/app/store/slices/noteSlice";
 import {
     useEditNote,
     useGetAllBacklinks,
@@ -29,7 +30,7 @@ import {RecordCircleIcon} from "@/components/icons"
 import Link from "next/link";
 import {Spin} from "antd";
 import {formatTime} from "@/utils/methods";
-import {useAppDispatch} from "@/app/store/hooks";
+import {useAppDispatch, useAppSelector} from "@/app/store/hooks";
 import {openModal} from "@/app/store/slices/modalSlice";
 const MarkdownEditor = dynamic(
     () => import("@/components/MarkdownEditor"),
@@ -43,8 +44,10 @@ export default function NotePage() {
     const mediaRecorderRef = useRef<MediaRecorder | null>(null)
     const chunksRef = useRef<Blob[]>([])
     const [note, setNote] = useState<Partial<Note> | null>(null);
-    const [noteTitle, setNoteTitle] = useState<Note['title']>('')
-    const [noteContent, setNoteContent] = useState<Note['content']>('')
+    // const [noteTitle, setNoteTitle] = useState<Note['title']>('')
+    const noteTitle = useAppSelector(state => state.note.noteTitle)
+    // const [noteContent, setNoteContent] = useState<Note['content']>('')
+    const noteContent = useAppSelector(state => state.note.noteContent)
     const [mode, setMode] = useState<"edit" | "preview">("edit");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -71,10 +74,7 @@ export default function NotePage() {
         console.log("==============================")
         if (voiceToTextAvalAiIsSuccess) console.log("voiceToTextData = ", voiceToTextAvalAiData)
         if (voiceToTextAvalAiIsSuccess) {
-            setNoteContent(prev => {
-                const newContent = (prev || "") + "\n" + voiceToTextAvalAiData?.data?.text
-                return newContent
-            })
+            dispatch(setNoteContent((noteContent || "") + "\n" + voiceToTextAvalAiData?.data?.text))
         }
     }, [voiceToTextAvalAiData, voiceToTextAvalAiIsSuccess])
     async function sendAudioToAPI(blob: Blob) {
@@ -163,8 +163,8 @@ export default function NotePage() {
                 const res = await axios.get(`/api/notes/${id}`);
 
                 setNote(res.data.note);
-                setNoteTitle(res.data.note.title)
-                setNoteContent(res.data.note.content)
+                dispatch(setNoteTitle(res.data.note.title))
+                dispatch(setNoteContent(res.data.note.content))
                 setLoading(false);
             } catch (err) {
                 setLoading(false);
@@ -234,7 +234,10 @@ export default function NotePage() {
                     <NodeIndexOutlined />
                 </button>
                 <button
-                    onClick={() => {dispatch(openModal({modalType: 'SuggestedLinksModal', modalProps: {noteId: id, noteTitle: noteTitle}}))}}
+                    onClick={() => {dispatch(openModal({
+                        modalType: 'SuggestedLinksModal',
+                        modalProps: {noteId: id}
+                    }))}}
                     className="flex justify-between items-center rounded-md cursor-pointer w-auto text-left px-3 py-2 hover:bg-[#3a3a3a] text-gray-200">
                     <BulbOutlined />
                 </button>
@@ -248,7 +251,7 @@ export default function NotePage() {
             <input
                 value={noteTitle || ""}
                 onChange={(e) =>
-                    setNoteTitle(e.target.value)
+                    dispatch(setNoteTitle(e.target.value))
                 }
                 className="text-3xl font-bold bg-transparent outline-none px-6 pt-6"
                 placeholder="Untitled"
@@ -259,7 +262,7 @@ export default function NotePage() {
                     mode === 'edit' ?
                         <MarkdownEditor
                             value={noteContent}
-                            onChange={(value) => setNoteContent(value)}
+                            onChange={(value) => dispatch(setNoteContent(value))}
                             className={'h-full'}
                         /> :
                         <div className="prose prose-invert markdown max-w-none">
