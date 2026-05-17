@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
     const searchTerm = searchParams.get("search")
 
     if (title) {
-        const note = await prisma.note.findUnique({
+        const note = await prisma.note.findFirst({
             where: {title: title, userId: user.id} ,
             select: {
                 id: true,
@@ -75,7 +75,6 @@ export async function POST(req: NextRequest) {
     } else {
         const note = await prisma.note.create({
             data: {
-                title: "Untitled",
                 content: "",
                 userId: user.id,
             },

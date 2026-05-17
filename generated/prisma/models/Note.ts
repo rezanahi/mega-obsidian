@@ -256,10 +256,11 @@ export type NoteOrderByWithRelationInput = {
 
 export type NoteWhereUniqueInput = Prisma.AtLeast<{
   id?: number
-  title?: string
+  userId_title?: Prisma.NoteUserIdTitleCompoundUniqueInput
   AND?: Prisma.NoteWhereInput | Prisma.NoteWhereInput[]
   OR?: Prisma.NoteWhereInput[]
   NOT?: Prisma.NoteWhereInput | Prisma.NoteWhereInput[]
+  title?: Prisma.StringNullableFilter<"Note"> | string | null
   content?: Prisma.StringFilter<"Note"> | string
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
@@ -268,7 +269,7 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   outgoingLinks?: Prisma.NoteLinkListRelationFilter
   incomingLinks?: Prisma.NoteLinkListRelationFilter
-}, "id" | "title">
+}, "id" | "userId_title">
 
 export type NoteOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -388,6 +389,11 @@ export type FloatNullableListFilter<$PrismaModel = never> = {
   hasEvery?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
   hasSome?: number[] | Prisma.ListFloatFieldRefInput<$PrismaModel>
   isEmpty?: boolean
+}
+
+export type NoteUserIdTitleCompoundUniqueInput = {
+  userId: number
+  title: string
 }
 
 export type NoteCountOrderByAggregateInput = {

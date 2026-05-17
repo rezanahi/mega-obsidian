@@ -23,7 +23,7 @@ model User {
 
 model Note {
   id        Int      @id @default(autoincrement())
-  title     String?  @unique
+  title     String?
   content   String   @default("")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -36,7 +36,10 @@ model Note {
   outgoingLinks NoteLink[] @relation("OutgoingLinks")
 
   incomingLinks NoteLink[] @relation("IncomingLinks")
+
+  @@unique([userId, title])
 }
+
 
 model NoteLink {
   id Int @id @default(autoincrement())
