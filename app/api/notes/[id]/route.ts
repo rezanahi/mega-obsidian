@@ -29,18 +29,18 @@ async function syncNoteLinksTx(
     });
 
     const existingTitles = targetNotes.map((n: any) => n.title);
-    const missingTitles = uniqueRawLinks.filter(name => !existingTitles.includes(name));
+    // const missingTitles = uniqueRawLinks.filter(name => !existingTitles.includes(name));
 
-    if (missingTitles.length > 0) {
-        await tx.note.createMany({
-            data: missingTitles.map(title => ({
-                title,
-                content: "",
-                userId
-            })),
-            skipDuplicates: true
-        });
-    }
+    // if (missingTitles.length > 0) {
+    //     await tx.note.createMany({
+    //         data: missingTitles.map(title => ({
+    //             title,
+    //             content: "",
+    //             userId
+    //         })),
+    //         skipDuplicates: true
+    //     });
+    // }
 
     const allTargets = await tx.note.findMany({
         where: {
