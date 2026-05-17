@@ -21,7 +21,7 @@ export default function Sidebar() {
     const {notes, isLoading} = useGetAllNotes()
     const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; props: any}>({visible: false, x: 0, y: 0, noteId: null, props: {title: ''}});
     const router = useRouter();
-    const { mutateAsync: addNote } = useAddNote()
+    const { mutateAsync: addNote, data: addNoteData, isSuccess: addNoteIsSuccess } = useAddNote()
     const { mutate: deleteNote } = useDeleteNote()
     const pathname = usePathname();
     const dispatch = useAppDispatch()
