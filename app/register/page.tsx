@@ -6,10 +6,12 @@ import Link from "next/link";
 import {useState} from "react";
 import {redirect} from "next/navigation";
 import { useRouter } from 'next/navigation';
+import useApp from "antd/es/app/useApp";
 
 export default function RegisterPage() {
     const [loading, setLoading] = useState<boolean>()
     const router = useRouter();
+    const { message } = useApp()
     const onFinish = async (values: any) => {
         setLoading(true)
         try {
@@ -23,7 +25,7 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="flex items-center justify-center min-h-screen bg-black">
             <Card className="w-full max-w-md shadow-lg">
                 <h2 className="text-xl font-semibold mb-6 text-center">ثبت‌نام</h2>
 

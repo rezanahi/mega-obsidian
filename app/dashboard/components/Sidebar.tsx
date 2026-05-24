@@ -14,6 +14,7 @@ import {useAppDispatch, useAppSelector} from "@/app/store/hooks";
 import {setSearchValue, setSidebarMode} from "@/app/store/slices/sidebarSlice";
 import {useDebounce} from "@/app/hooks/useDebounce";
 import {openModal} from "@/app/store/slices/modalSlice";
+import useApp from "antd/es/app/useApp";
 
 
 
@@ -41,6 +42,7 @@ export default function Sidebar() {
 
 
     const logout = async () => {
+        const { message } = useApp()
         try {
             const res = await axios.post("/api/auth/logout");
             message.success("با موفقیت خارج شدید")
