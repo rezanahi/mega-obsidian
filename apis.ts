@@ -200,27 +200,6 @@ export const useGetGraphById = ({id}: {id: string}) => {
     };
 }
 
-// Voice To Text
-export const useVoiceToText = () => {
-    const queryClient = useQueryClient()
-    return useMutation({
-        mutationFn: async (body: any) => {
-            const res = await axios.post(`/api/audio-to-text`, body);
-            console.log("res = ", res)
-            return res
-        },
-        onSuccess: () => {
-            // queryClient.invalidateQueries({
-            //     queryKey: ["notes"]
-            // });
-            // message.success("یادداشت حذف شد")
-        },
-        onError: () => {
-            message.error("خطا در تبدیل صوت به متن")
-        }
-    });
-}
-
 export const voiceToTextAvalAi = () => {
     const queryClient = useQueryClient()
     return useMutation({

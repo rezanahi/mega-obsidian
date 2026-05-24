@@ -11,7 +11,6 @@ import {
     useGetAllBacklinks,
     useGetAllNotes, useGetSuggestedLinks,
     useGetNoteByTitle,
-    useVoiceToText,
     voiceToTextAvalAi
 } from "@/apis";
 import ReactMarkdown from "react-markdown"
@@ -55,7 +54,6 @@ export default function NotePage() {
     const [recordTime, setRecordTime] = useState(0)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const { mutate : updateNote } = useEditNote(String(id))
-    const { mutate : voiceToText, data: voiceToTextData, isSuccess: voiceToTextIsSuccess, isError: voiceToTextIsError} = useVoiceToText()
     const { mutate : voiceToTextAvalAiMutate, data: voiceToTextAvalAiData, isSuccess: voiceToTextAvalAiIsSuccess, isPending: voiceToTextAvalAiIsPending, isError: voiceToTextAvalAiIsError } = voiceToTextAvalAi()
     const { data: backlinksData, isSuccess: backlinksIsSuccess, isLoading: backlinksIsLoading } = useGetAllBacklinks({id: id as string})
 
@@ -87,7 +85,6 @@ export default function NotePage() {
         //     method: "POST",
         //     body: formData,
         // })
-        const res = await voiceToText(formData)
         console.log("YOHAHA = ", file)
         voiceToTextAvalAiMutate(file)
 
