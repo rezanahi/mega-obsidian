@@ -4,6 +4,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {getUserFromToken} from "@/utils/auth";
 import prisma from "@/lib/prisma";
 import {message} from "antd";
+import {usePathname} from "next/navigation";
 
 // Get All Notes
 export const useGetAllNotes = () => {
@@ -23,7 +24,7 @@ export const useGetAllNotes = () => {
 // Get Searched Notes
 export const useGetAllNotesBySearch = (search: string) => {
     const { data, isLoading, isError, error } = useQuery<any, any>({
-        queryKey: ["note", search],
+        queryKey: ["snote", search],
         queryFn: async ({}) => {
             if (search) {
                 const res = await axios.get(`/api/notes?search=${search}`)
@@ -40,7 +41,7 @@ export const useGetAllNotesBySearch = (search: string) => {
 // Get One Note By Title
 export const useGetNoteByTitle = (title: string | null) => {
     const { data, isLoading, isSuccess, isError } = useQuery<any, any>({
-        queryKey: ["note", title],
+        queryKey: ["tnote", title],
         queryFn: async ({ queryKey }) => {
             if (title) {
                 const res = await axios.get(`/api/notes?title=${title}`)
@@ -82,7 +83,7 @@ export const useEditNote = (id: string) => {
         mutationFn: async ({title, content}: {title: string, content: string}) => {
             return await axios.put(`/api/notes/${id}`, { title, content });
         },
-        onSuccess: () => {
+        onSuccess:async () => {
             queryClient.invalidateQueries({
                 queryKey: ["notes"]
             }); // ریفرش کردن GET;
@@ -98,17 +99,24 @@ export const useEditNote = (id: string) => {
 
 // Edit Note Title Api
 export const useEditNoteTitle = ({id} : {id: string}) => {
+    const pathName = usePathname()
     const queryClient = useQueryClient()
     const [messageApi, contextHolder] = message.useMessage();
     return useMutation({
         mutationFn: async ({title}: {title: string}) => {
             return await axios.patch(`/api/notes/${id}`, { title });
         },
-        onSuccess: (data) => {
+        onSuccess: async (data) => {
             message.success(data?.data?.message);
-            queryClient.invalidateQueries({
+            await queryClient.invalidateQueries({
                 queryKey: ["notes"]
             }); // ریفرش کردن GET;
+            if (pathName.split('/')[pathName.split('/').length-1] == id) {
+                await queryClient.invalidateQueries({
+                    queryKey: ["note", id],
+                    exact: true
+                }); // ریفرش کردن GET;
+            }
             // setTimeout(() => messageApi.success(data?.data?.message), 0);
         },
         onError: (error: any) => {
