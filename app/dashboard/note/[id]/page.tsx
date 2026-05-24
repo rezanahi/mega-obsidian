@@ -296,8 +296,8 @@ export default function NotePage() {
                     {
                         backlinksData?.backlinks?.map((bl : any) => {
                             return (
-                                <div className={`flex justify-start gap-4 items-center text-gray-400/70`} key={bl.id}>
-                                    <Link href={`/dashboard/note/${bl.id}`}>{bl.title}</Link>
+                                <div className={`flex justify-start gap-4 items-center `} key={bl.id}>
+                                    <Link className={'!text-gray-400/70'} href={`/dashboard/note/${bl.id}`}>{bl.title}</Link>
                                     <ArrowRightOutlined />
                                 </div>
                             )

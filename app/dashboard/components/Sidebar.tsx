@@ -105,7 +105,7 @@ export default function Sidebar() {
                                         }}
                                         key={note.id}
                                         href={`/dashboard/note/${note.id}`}
-                                        className={`block px-3 py-2 ${isActive ? "bg-gray-600 text-white" : "hover:bg-gray-700"} transition`}
+                                        className={`!block !text-white !px-3 !py-2 ${isActive ? "!bg-gray-600 !text-white" : "hover:!bg-gray-700"} !transition`}
                                     >
                                         {note.title || "Untitled"}
                                     </Link>
@@ -149,7 +149,7 @@ export default function Sidebar() {
                                                 }}
                                                 key={note.id}
                                                 href={`/dashboard/note/${note.id}`}
-                                                className={`block px-3 py-2 ${isActive ? "bg-gray-600 text-white" : "hover:bg-gray-700"} transition`}
+                                                className={`!block !px-3 !py-2 ${isActive ? "!bg-gray-600 !text-white" : "!hover:bg-gray-700"} !transition`}
                                             >
                                                 {note.title || "Untitled"}
                                             </Link>

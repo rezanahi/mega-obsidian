@@ -14,7 +14,7 @@ export default function NotFound() {
 
                 <Link
                     href="/"
-                    className="inline-block px-8 py-4 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-all duration-300 transform hover:scale-105 active:scale-95"
+                    className="!inline-block !px-8 !py-4 !bg-white !text-black !font-semibold !rounded-full hover:!bg-gray-200 !transition-all !duration-300 !transform hover:!scale-105 active:!scale-95"
                 >
                     Go to Home
                 </Link>

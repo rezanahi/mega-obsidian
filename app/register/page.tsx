@@ -41,7 +41,7 @@ export default function RegisterPage() {
                     </Button>
 
                     <div className="text-center mt-4">
-                        <Link href="/login" className="text-blue-600">
+                        <Link href="/login" className="!text-blue-600">
                             قبلاً ثبت‌نام کردی؟ ورود
                         </Link>
                     </div>

@@ -5,6 +5,7 @@ import {getUserFromToken} from "@/utils/auth";
 import prisma from "@/lib/prisma";
 import {message} from "antd";
 import {usePathname} from "next/navigation";
+import useApp from "antd/es/app/useApp";
 
 // Get All Notes
 export const useGetAllNotes = () => {
@@ -79,6 +80,7 @@ export const useGetNoteById = ({id} :{id: string | undefined}) => {
 // Edit Note Api
 export const useEditNote = (id: string) => {
     const queryClient = useQueryClient()
+    const { message } = useApp()
     return useMutation({
         mutationFn: async ({title, content}: {title: string, content: string}) => {
             return await axios.put(`/api/notes/${id}`, { title, content });
@@ -101,7 +103,7 @@ export const useEditNote = (id: string) => {
 export const useEditNoteTitle = ({id} : {id: string}) => {
     const pathName = usePathname()
     const queryClient = useQueryClient()
-    const [messageApi, contextHolder] = message.useMessage();
+    const { message } = useApp()
     return useMutation({
         mutationFn: async ({title}: {title: string}) => {
             return await axios.patch(`/api/notes/${id}`, { title });
@@ -131,6 +133,7 @@ export const useEditNoteTitle = ({id} : {id: string}) => {
 // Add Note Api
 export const useAddNote = () => {
     const queryClient = useQueryClient()
+    const { message } = useApp()
     return useMutation({
         mutationFn: async (body: { title?: string }) => {
             const res = await axios.post(`/api/notes`, {title: body.title});
@@ -150,6 +153,7 @@ export const useAddNote = () => {
 
 // Delete Note Api
 export const useDeleteNote = () => {
+    const { message } = useApp()
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id: string) => {
