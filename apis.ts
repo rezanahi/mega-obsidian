@@ -134,7 +134,7 @@ export const useAddNote = () => {
     return useMutation({
         mutationFn: async (body: { title?: string }) => {
             const res = await axios.post(`/api/notes`, {title: body.title});
-            return res?.data?.updatedNote
+            return res?.data?.note
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
