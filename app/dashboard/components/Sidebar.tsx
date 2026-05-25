@@ -19,6 +19,7 @@ import useApp from "antd/es/app/useApp";
 
 
 export default function Sidebar() {
+    const { message } = useApp()
     const {notes, isLoading} = useGetAllNotes()
     const [contextMenu, setContextMenu] = useState<{ visible: boolean; x: number; y: number; noteId: number | null; props: any}>({visible: false, x: 0, y: 0, noteId: null, props: {title: ''}});
     const router = useRouter();
@@ -39,10 +40,14 @@ export default function Sidebar() {
         return () => window.removeEventListener("click", close);
     }, []);
 
+    useEffect(() => {
+        console.log('addNoteData = ', addNoteData)
+    }, [addNoteData])
+
 
 
     const logout = async () => {
-        const { message } = useApp()
+
         try {
             const res = await axios.post("/api/auth/logout");
             message.success("با موفقیت خارج شدید")
@@ -56,8 +61,6 @@ export default function Sidebar() {
     const createNote = async () => {
         try {
             const newNote = await addNote({title: undefined})
-            // message.success("یادداشت با موفقیت ساخته شد")
-            console.log("newNote = ", newNote)
             router.push(`/dashboard/note/${newNote.id}`)
         } catch (err) {
 
@@ -151,7 +154,7 @@ export default function Sidebar() {
                                                 }}
                                                 key={note.id}
                                                 href={`/dashboard/note/${note.id}`}
-                                                className={`!block !px-3 !py-2 ${isActive ? "!bg-gray-600 !text-white" : "!hover:bg-gray-700"} !transition`}
+                                                className={`!block !text-white !px-3 !py-2 ${isActive ? "!bg-gray-600 !text-white" : "hover:!bg-gray-700"} !transition`}
                                             >
                                                 {note.title || "Untitled"}
                                             </Link>

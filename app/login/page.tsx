@@ -1,14 +1,16 @@
 "use client"
 
-import { Form, Input, Button, message, Card } from "antd";
+import { Form, Input, Button, Card } from "antd";
 import axios from "axios";
 import Link from "next/link";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import useApp from "antd/es/app/useApp";
 
 export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const { message } = useApp()
 
     const onFinish = async (values: any) => {
         setLoading(true);
