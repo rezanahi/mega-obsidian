@@ -16,7 +16,7 @@ export default function LoginPage() {
         setLoading(true);
         try {
             const res = await axios.post("/api/auth/login", values);
-            message.success("ورود موفقیت‌آمیز");
+            message.success("ورود موفقیت‌آمیز")
             router.push('/dashboard');
         } catch (err: any) {
             message.error(err.response?.data?.error || "خطا در ورود");
