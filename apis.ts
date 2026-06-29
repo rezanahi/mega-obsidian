@@ -268,3 +268,26 @@ export const useGetSuggestedLinks = ({id}: {id: string}) => {
         isSuccess
     };
 }
+
+export const ChatAvalAiApi = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async ({userId, question}: {userId: number, question: string}) => {
+            const res = await axios.post(`/api/chat/`,
+                {
+                    userId: userId,
+                    question: question
+        });
+            return res
+        },
+        onSuccess: () => {
+            // queryClient.invalidateQueries({
+            //     queryKey: ["notes"]
+            // });
+            // message.success("یادداشت حذف شد")
+        },
+        onError: () => {
+            message.error("خطا، لطفا مجدد تلاش کنید!")
+        }
+    })
+}
