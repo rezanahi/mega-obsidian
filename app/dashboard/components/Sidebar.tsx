@@ -15,6 +15,8 @@ import {setSearchValue, setSidebarMode} from "@/app/store/slices/sidebarSlice";
 import {useDebounce} from "@/app/hooks/useDebounce";
 import {openModal} from "@/app/store/slices/modalSlice";
 import useApp from "antd/es/app/useApp";
+import {MessageIcon} from "@/components/icons";
+
 
 
 
@@ -72,6 +74,9 @@ export default function Sidebar() {
             {/* Header */}
             <div className="p-3 h-12 border-b border-gray-700 flex justify-start gap-3">
                 <span className="font-semibold mr-auto">Notes</span>
+                <button onClick={() => router.push('/dashboard/chat')} className={'text-green-400 hover:text-green-300 cursor-pointer'}>
+                    <MessageIcon stroke={'#05df72'} width={16} height={16} classname={'hover:'}/>
+                </button>
                 <button onClick={() => dispatch(setSidebarMode("search"))} className={'text-green-400 hover:text-green-300 cursor-pointer'}>
                     <SearchOutlined />
                 </button>
