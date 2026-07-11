@@ -18,7 +18,7 @@ export default function ChatPage () {
 
     function SendPromptHandler () {
         console.log('Enter Handled')
-        chatApi({question: prompt, userId: 4})
+        chatApi({question: prompt})
         setPrompt('')
     }
 

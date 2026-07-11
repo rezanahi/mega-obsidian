@@ -272,10 +272,9 @@ export const useGetSuggestedLinks = ({id}: {id: string}) => {
 export const ChatAvalAiApi = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: async ({userId, question}: {userId: number, question: string}) => {
+        mutationFn: async ({question}: {question: string}) => {
             const res = await axios.post(`/api/chat/`,
                 {
-                    userId: userId,
                     question: question
         });
             return res
