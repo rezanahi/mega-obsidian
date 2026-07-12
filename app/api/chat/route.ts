@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { buildRagPrompt, findTopKNotes } from "@/lib/rag";
+import {getUserFromToken} from "@/utils/auth";
 
 type EmbedResponse = {
     embedding: number[];
@@ -9,9 +10,10 @@ type EmbedResponse = {
 
 export async function POST(req: NextRequest) {
     try {
+        const user = await getUserFromToken();
         const body = await req.json();
         const question = body?.question?.trim();
-        const userId = body?.userId; // موقت؛ بهتره از session بگیری
+        const userId = user?.id; // موقت؛ بهتره از session بگیری
 
         if (!question) {
             return NextResponse.json(
