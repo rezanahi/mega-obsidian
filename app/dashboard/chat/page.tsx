@@ -42,7 +42,7 @@ export default function ChatPage () {
                         <Spin></Spin> :
                         (chatApiSuccess && chatApiData) &&
                         <div className={'bg-gray-800 rounded-md w-full h-auto p-2'}>
-                            <p className={'border-b border-gray-500 pb-4 mb-4'}>
+                            <p style={{ direction: 'rtl' }} className={'border-b border-gray-500 pb-4 mb-4 text-right'}>
                                 {chatApiData?.data?.answer}
                             </p>
                             {

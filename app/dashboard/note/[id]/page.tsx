@@ -181,7 +181,7 @@ export default function NotePage() {
 
     return (
         <div className="flex flex-col justify-start gap-3 h-full overflow-y-auto">
-            <div className={`h-12 sticky top-0 bg-[#252526] shrink-0 flex gap-1 justify-end items-center px-3 border-b border-gray-700`}>
+            <div className={`h-12 sticky z-50 top-0 bg-[#252526] shrink-0 flex gap-1 justify-end items-center px-3 border-b border-gray-700`}>
                 {
                     voiceToTextAvalAiIsPending ?
                         <Spin indicator={<LoadingOutlined spin />} size={"small"}></Spin> :
