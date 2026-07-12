@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { buildRagPrompt, findTopKNotes } from "@/lib/rag";
 import {getUserFromToken} from "@/utils/auth";
+import { mapUsedSources } from "@/lib/ragSources";
 
 type EmbedResponse = {
     embedding: number[];
@@ -129,8 +130,14 @@ export async function POST(req: NextRequest) {
             "پاسخی از مدل دریافت نشد.";
 
         // 6) بازگرداندن پاسخ + منابع
+        const sources = topNotes.map((item) => ({
+            id: item.note.id,
+            title: item.note.title,
+            score: item.score,
+        }))
         return NextResponse.json({
             answer,
+            used_sources: mapUsedSources(answer, sources),
             sources: topNotes.map((item) => ({
                 id: item.note.id,
                 title: item.note.title,

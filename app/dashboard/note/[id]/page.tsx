@@ -250,19 +250,21 @@ export default function NotePage() {
                 onChange={(e) =>
                     dispatch(setNoteTitle(e.target.value))
                 }
-                className="text-3xl font-bold bg-transparent outline-none px-6 pt-6"
+                className="text-3xl font-bold bg-transparent outline-none px-12 pt-6 text-right"
                 placeholder="Untitled"
             />
 
-            <div className="flex-1 px-6 pb-6 grow">
+            <div className="flex-1 px-6 pb-6 grow w-full">
                 {
                     mode === 'edit' ?
-                        <MarkdownEditor
-                            value={noteContent}
-                            onChange={(value) => dispatch(setNoteContent(value))}
-                            className={'h-full'}
-                        /> :
-                        <div className="prose prose-invert markdown max-w-none">
+                        <div style={{ direction: 'rtl' }} className="prose prose-invert markdown max-w-none text-right h-full">
+                            <MarkdownEditor
+                                value={noteContent}
+                                onChange={(value) => dispatch(setNoteContent(value))}
+                                className={'h-full'}
+                            />
+                        </div> :
+                        <div style={{ direction: 'rtl' }} className="prose prose-invert markdown max-w-none text-right px-6">
                             <ReactMarkdown
                                 components={{
                                     a: ({node, ...props}) => {

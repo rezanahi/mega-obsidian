@@ -1,10 +1,16 @@
-export async function getEmbedding(text: string): Promise<number[]> {
+export async function getEmbedding(
+    text: string,
+    inputType: "query" | "passage" = "passage"
+): Promise<number[]> {
     const res = await fetch("http://127.0.0.1:8001/embed", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+            text,
+            input_type: inputType,
+        }),
         cache: "no-store",
     });
 

@@ -111,7 +111,7 @@ export default function ChatPage () {
     }
 
     return (
-        <div className={'w-full h-full flex justify-center items-center'}>
+        <div className={'w-full h-auto flex justify-center items-center'}>
             <section className={'max-w-[400px] w-full flex flex-col gap-6 justify-start items-center py-10'}>
                 <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
                     MegaBot
@@ -185,8 +185,7 @@ export default function ChatPage () {
                             </div>
 
                             {
-                                chatApiData?.data?.sources
-                                    ?.slice(0, 2)
+                                chatApiData?.data?.used_sources
                                     ?.map(source => {
                                     return (
                                         <div className={`flex justify-start gap-4 items-center py-1`} key={source.id}>

@@ -3,6 +3,7 @@ import { NextResponse, NextRequest} from "next/server";
 import { getUserFromToken } from "@/utils/auth";
 import {extractWikiLinks} from "@/utils/methods";
 import { getEmbedding } from "@/lib/embedding";
+import {buildEmbeddingText} from "@/lib/textUtils";
 
 
 // Functions / Helpers
@@ -164,8 +165,8 @@ export async function PUT(
             let embedding: number[] | undefined;
 
             if (textChanged) {
-                const textForEmbedding = `${title}\n\n${content}`;
-                embedding = await getEmbedding(textForEmbedding);
+                const textForEmbedding = buildEmbeddingText(title, content);
+                embedding = await getEmbedding(textForEmbedding, "passage");
             }
 
             // ✅ آپدیت خود note
