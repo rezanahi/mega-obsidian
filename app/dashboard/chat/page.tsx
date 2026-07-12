@@ -28,7 +28,15 @@ export default function ChatPage () {
                 <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
                     MegaBot
                 </h1>
-                <Input disabled={chatApiIsLoading} onPressEnter={() => SendPromptHandler()} placeholder={'Ask...'} className={'w-full'} autoFocus value={prompt} onChange={(e) => setPrompt(e.target.value)}></Input>
+                <TextArea
+                    disabled={chatApiIsLoading}
+                    onPressEnter={() => SendPromptHandler()}
+                    placeholder={'Ask...'}
+                    className={'w-full text-wrap h-auto overflow-hidden'}
+                    autoFocus
+                    value={prompt}
+                    onChange={(e) => setPrompt(e.target.value)}>
+                </TextArea>
                 {
                     chatApiIsLoading ?
                         <Spin></Spin> :
