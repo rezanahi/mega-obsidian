@@ -7,6 +7,10 @@ import {ArrowRightOutlined, AudioOutlined, LoadingOutlined} from "@ant-design/ic
 import {formatTime} from "@/utils/methods";
 import {RecordCircleIcon} from "@/components/icons";
 import type { InputRef } from "antd";
+import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
+import remarkWikiLink from "remark-wiki-link";
+import ReactMarkdown from "react-markdown";
 
 
 const { TextArea } = Input;
@@ -108,7 +112,7 @@ export default function ChatPage () {
 
     return (
         <div className={'w-full h-full flex justify-center items-center'}>
-            <section className={'max-w-[400px] w-full flex flex-col gap-6 justify-start items-center'}>
+            <section className={'max-w-[400px] w-full flex flex-col gap-6 justify-start items-center py-10'}>
                 <h1 className="text-3xl md:text-5xl font-bold tracking-tighter">
                     MegaBot
                 </h1>
@@ -154,11 +158,36 @@ export default function ChatPage () {
                         <Spin></Spin> :
                         (chatApiSuccess && chatApiData) &&
                         <div className={'bg-gray-800 rounded-md w-full h-auto p-2'}>
-                            <p style={{ direction: 'rtl' }} className={'border-b border-gray-500 pb-4 mb-4 text-right'}>
-                                {chatApiData?.data?.answer}
-                            </p>
+                            <div style={{ direction: 'rtl' }} className={'border-b border-gray-500 pb-4 mb-4 text-right'}>
+                                <ReactMarkdown
+                                    components={{
+                                        a: ({node, ...props}) => {
+                                            const href = String(props.href)?.split("/").slice(2).join('/');
+                                            return (
+                                                <Link href={href} prefetch={false}>
+                                                    {props.children}
+                                                </Link>
+                                            );
+                                        },
+                                    }}
+                                    remarkPlugins={[
+                                        remarkGfm,
+                                        remarkBreaks,
+                                        [
+                                            remarkWikiLink, {
+                                            pageResolver: (name: string) => {
+                                                return [`/dashboard/note/resolve/${name.trim()}`]
+                                            }
+                                        }]
+                                    ]}>
+                                    {String(chatApiData?.data?.answer ?? '').replace(/^\t+/gm, "").replace(/^ {1,4}/gm, "").trimStart()}
+                                </ReactMarkdown>
+                            </div>
+
                             {
-                                chatApiData?.data?.sources?.map(source => {
+                                chatApiData?.data?.sources
+                                    ?.slice(0, 2)
+                                    ?.map(source => {
                                     return (
                                         <div className={`flex justify-start gap-4 items-center py-1`} key={source.id}>
                                             <Link className={'!text-gray-400/70'} href={`/dashboard/note/${source.id}`}>{source.title}</Link>
